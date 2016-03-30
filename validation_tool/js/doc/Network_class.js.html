@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Network_class.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: Network_class.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>
+/** This  Class is responsible for each Network, it handles the stations and the 
+	visibility of the correct markers (network or stations) and also the info window
+	of the network marker.
+	@author Christoph Paulik - christoph.paulik@geo.tuwien.ac.at
+	@constructor
+	@param {google maps object} map - google maps object the ISMN should work on
+	@param {object}	networkObject - js object from json file containing information about the network and its stations
+	@param {string} color - hex color code of network color
+	@param {boolean} visible - if the network should be visible from the start
+	@param {boolean} infoWindowEnabled - if the markers should have infoWindows, only necessary for static overviews
+	@param {boolean} menuEnabled - if a menu exists - does not for static overviews
+	@param {int} networkMarkerZoom - zoomlevel at which the network marker should be switched for the station markers
+*/
+function Network(map,networkObject,color,visible,infoWindowEnabled,menuEnabled,networkMarkerZoom){
+	
+	// Name of the DataViewer where the map is displayed
+	this.map = map;
+	
+	this.name=networkObject.networkID;
+	
+	this.stationObject=networkObject.Stations;	//all stations belonging to the network
+	
+	this.networkObject=networkObject;
+	
+	this.networkContinent=networkObject.network_continent.replace("_"," "); //network continent spaces filled with underscores
+	
+	this.stations=[];
+	
+	this.visible=visible;
+	
+	this.stationsVisible=visible;
+	
+	this.networkMarkerVisible=visible;
+	
+	this.infoWindowEnabled=infoWindowEnabled;
+	
+	this.menuEnabled=menuEnabled;
+	
+	this.color=color;
+	
+	this.Extent=new google.maps.LatLngBounds();
+	
+	this.networkMarker=undefined;
+	
+	this.networkMarkerZoom=networkMarkerZoom;	//zoomlevel at which the network marker should be switched for the station markers
+	
+	this.zoomLevelsThresholds=[];	//not used, if set the icons change size at these zoomlevels
+      		 		
+	
+}
+/** initializes the network
+	adds the stations, adds listeners, show the correct markers for the current zoom level
+	and generate info windows
+	*/
+Network.prototype.init= function(){
+
+	this.generateStations();
+	this.addListeners();
+	this.showCorrectMarkers();
+	if(this.infoWindowEnabled)this.generateInfoWindow();
+
+}
+
+/** make new stations from stationObject and calculate Extent of the Network
+*/
+Network.prototype.generateStations = function(){
+
+	for (var i = 0; i &lt; this.stationObject.length; i++) {	
+		var station=new Station(this.map,this,this.stationObject[i],this.visible,this.infoWindowEnabled);
+		station.init();
+		this.Extent=this.Extent.extend(station.getLocation());
+		this.stations.push(station);
+	}	
+	
+	this.networkMarker=new ISMNMarker(this.map,this.Extent.getCenter(),this.color,this.networkMarkerVisible,this.name);	
+
+}
+/** populate info window with content
+*/
+Network.prototype.generateInfoWindow= function(){
+
+	var html ='&lt;div class="iwindow">&lt;h2>'+this.name+'&lt;/h2>&lt;br>';
+	if(this.networkObject.network_abstract!=null){
+		html+='&lt;h2>Abstract:&lt;/h2>'+this.networkObject.network_abstract+' &lt;br>';
+	}
+	if(this.networkObject.network_reference!=null){
+		html+='&lt;b>Reference:&lt;/b> '+this.networkObject.network_reference+' &lt;br>';
+	}
+	html+='&lt;b>Status:&lt;/b> '+this.networkObject.network_status+' &lt;br> &lt;b>Country:&lt;/b> '+this.networkObject.network_country+' &lt;br>\
+	&lt;b>Operational start:&lt;/b> '+this.networkObject.network_start+' &lt;br> &lt;b>Type:&lt;/b> '+this.networkObject.network_type+' &lt;br>';
+	if(this.networkObject.network_url!=null){
+		html+='&lt;b>URL:&lt;/b> &lt;a target="_blank" href="'+this.networkObject.network_url+'">'+this.networkObject.network_url+'&lt;/a>'+' &lt;br>';
+	}
+	html+='&lt;table>&lt;thead>&lt;tr>&lt;th> Variables measured &lt;/th>&lt;th> Soil Moisture measured at &lt;/th>&lt;th> Soil moisture measured with &lt;/th>&lt;/tr>&lt;/thead>\
+	&lt;tr>&lt;td>'+this.networkObject.network_variables+'&lt;/td>&lt;td>'+this.networkObject.network_depths+'&lt;/td>&lt;td>'+this.networkObject.network_sensors+'&lt;/td>&lt;/tr>&lt;/table>&lt;br>\
+	&lt;a class="Button" onclick="Master.fitToNetwork('+"'"+this.name+"'"+')">zoom in to see Stations&lt;/a>&lt;/div>';
+	
+    this.networkMarker.setInfoWindow(html,null);
+}
+
+/** add zoomListener to google maps.
+	in the current case the event is fired for each network which then checks the zoom level and 
+	sets the visibility of its markers correctly. May be faster if moved to class ISMN
+*/
+Network.prototype.addListeners =  function(){
+		var _self=this;
+		var PreviousZoom=this.map.getZoom();
+		 //if zoom crossed the level networkMarkerZoom threshold-> show station_marker
+		this.zoomListener=google.maps.event.addListener(this.map, 'zoom_changed', function() {   
+				zoomLevel=_self.map.getZoom();
+				
+				if((PreviousZoom&lt;_self.networkMarkerZoom&&zoomLevel>=_self.networkMarkerZoom)||(PreviousZoom>=_self.networkMarkerZoom&&zoomLevel&lt;_self.networkMarkerZoom)){
+					_self.showCorrectMarkers();
+				}
+				
+				for(var i=0;i&lt;_self.zoomLevelsThresholds.length;i++){
+				
+					if((PreviousZoom&lt;_self.zoomLevelsThresholds[i]&&zoomLevel>=_self.zoomLevelsThresholds[i])||(PreviousZoom>=_self.zoomLevelsThresholds[i]&&zoomLevel&lt;_self.zoomLevelsThresholds[i])){
+					_self.setMarkerIconsWithRespectToZoom(zoomLevel);
+					}
+				
+				}
+				PreviousZoom=zoomLevel;
+		});
+		
+}
+/** shows the network marker
+*/
+Network.prototype.showNetworkMarker = function(){
+
+	this.networkMarker.show();
+	this.networkMarkerVisible=true;
+}
+
+/** hides the network marker
+*/
+Network.prototype.hideNetworkMarker = function(){
+
+	this.networkMarker.hide();
+	this.networkMarkerVisible=false;
+
+}
+
+/** sets station icons depending on zoom level 
+	currently not used
+	@param {int} zoom - zoom level to use for setting the markers
+*/
+Network.prototype.setMarkerIconsWithRespectToZoom=function(zoom){
+
+	this.networkMarker.setIconWithRespectToZoom(zoom);
+	for (var i = 0; i &lt; this.stations.length; i++) {	
+		 this.stations[i].setMarkerIconsWithRespectToZoom(zoom);
+	}	
+	
+
+}
+
+/** checks if stations have data in date range and show or hide them if the current zoomlevel shows stations
+	@param {long} start - time in milliseconds from epoch
+	@param {long} end - time in milliseconds from epoch
+*/
+Network.prototype.checkStationsForDataInDateRange=function(start,end){
+
+	var zoom=this.map.getZoom();
+
+	for (var i = 0; i &lt; this.stations.length; i++) {	
+		 if(!this.stations[i].hasRecordsInDateRange(start,end)){
+			
+			
+			if(zoom >= this.networkMarkerZoom){
+				this.stations[i].hide();
+			}
+		}	
+		 else{
+			
+			if(zoom >= this.networkMarkerZoom){
+				this.stations[i].show();
+			}
+
+				
+		 }
+		 
+	}	
+	
+
+}
+
+/** shows the correct markers for the current zoom level
+*/
+Network.prototype.showCorrectMarkers= function(){
+	
+	if(this.isChecked()){
+		var zoom=this.map.getZoom();
+		if(zoom >= this.networkMarkerZoom){
+			this.showStations();
+			this.hideNetworkMarker();
+		}
+		else{
+			this.hideStations();
+			this.showNetworkMarker();
+		}
+	}
+	
+}
+/** shows the network and checks it in the menu
+*/
+Network.prototype.show = function(){
+	
+	if(this.menuEnabled)this.checkNetwork();
+	this.showCorrectMarkers();
+	this.visible=true;
+
+}
+
+/** hides the network and unchecks it in the menu
+*/
+Network.prototype.hide = function(){
+
+	this.hideNetworkMarker();
+	this.hideStations();
+	if(this.menuEnabled)this.uncheckNetwork();
+	this.visible=false;
+}
+
+/** unchecks the network checkbox in the menu
+*/
+Network.prototype.uncheckNetwork=function(){
+
+    var networkId="#networkCheckbox_"+this.name;
+	$(networkId).prop('checked',false);
+
+}
+
+/** checks the network checkbox in the menu
+*/
+Network.prototype.checkNetwork=function(){
+
+    var networkId="#networkCheckbox_"+this.name;
+	$(networkId).prop('checked',true);
+
+}
+
+/** checks if network is selected in menu
+	@returns {bool} true if network checkbox in menu is checked
+*/
+Network.prototype.isChecked=function(){
+
+	if(!this.menuEnabled)return true;
+    var networkId="#networkCheckbox_"+this.name;
+	return $(networkId).prop('checked');
+
+}
+/** toggles network visibility
+*/
+Network.prototype.toggle = function(){
+
+	this.hideNetworkMarker();
+	this.hideStations();
+	if(this.visible==false){
+		this.show();
+	}	
+	else this.hide();
+}
+
+/** shows all stations of the network
+*/
+Network.prototype.showStations = function(){
+	
+	for (var i = 0; i &lt; this.stations.length; i++) {	
+		 this.stations[i].show();
+	}	
+	this.stationsVisible=true;
+}
+
+/** deactivates all stations of the network
+*/
+Network.prototype.deactivateStations = function(){
+	
+	for (var i = 0; i &lt; this.stations.length; i++) {	
+		 this.stations[i].deactivate();
+	}	
+
+}
+/** activates all stations of the network
+*/
+Network.prototype.activateStations = function(){
+	
+	for (var i = 0; i &lt; this.stations.length; i++) {	
+		 this.stations[i].activate();
+	}	
+
+}
+/** deactivates all stations of the network that lie in bounds
+	@param {object} bounds - google.maps.LatLngBounds object
+*/
+Network.prototype.deactivateStationsInBounds = function(bounds){
+	
+	for (var i = 0; i &lt; this.stations.length; i++) {	
+		 
+		 if(!bounds.contains(this.stations[i].getLocation())){this.stations[i].deactivate();}
+		 
+	}	
+
+}
+/** activates all stations of the network that lie in bounds
+	@param {object} bounds - google.maps.LatLngBounds object
+*/
+Network.prototype.activateStationsInBounds = function(bounds){
+	
+	for (var i = 0; i &lt; this.stations.length; i++) {	
+		 
+		 if(!bounds.contains(this.stations[i].getLocation())){this.stations[i].activate();}
+		 
+	}	
+
+}
+/** hides all stations of the network
+*/
+Network.prototype.hideStations = function(){
+
+	for (var i = 0; i &lt; this.stations.length; i++) {	
+		 this.stations[i].hide();
+	}	
+	this.stationsVisible=false;
+
+}
+/** get the network Extent
+	@returns {object} google.maps.LatLngBounds object
+*/
+Network.prototype.getExtent = function(){
+    
+	return this.Extent;
+
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="ISMN.html">ISMN</a></li><li><a href="ISMNDataViewer.html">ISMNDataViewer</a></li><li><a href="ISMNMarker.html">ISMNMarker</a></li><li><a href="Network.html">Network</a></li><li><a href="Station.html">Station</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.1.0</a> on Thu Feb 07 2013 13:06:09 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+</body>
+</html>

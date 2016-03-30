@@ -1,0 +1,154 @@
+table {
+		border-collapse:collapse;
+		background:#EFF4FB;
+		border-left:1px solid #686868;
+		border-right:1px solid #686868;
+		border-bottom:1px solid #686868;
+		border-top:1px solid #686868;
+		font:0.8em/145% 'Trebuchet MS',helvetica,arial,verdana;
+		color: #333;
+}
+table.form {
+		width:100%;
+		top:0px;
+		border-collapse:collapse;
+		background:#EFF4FB;
+		border-right:none;
+		border-left:none;
+		
+		border-top:1px solid #686868;
+		font:0.8em/145% 'Trebuchet MS',helvetica,arial,verdana;
+		color: #333;
+}
+
+table.form td{
+		padding:5px;
+		/*border-bottom: solid 1px #333;*/
+		border-right:0px;
+}
+
+.header td{
+border-bottom: solid 1px #333333;
+border-top:solid 1px #333333;
+background:#A3C9FF;
+font-weight:bold;
+
+}
+
+
+label{
+display:block;
+}
+
+td, th {
+		padding:0px;
+}
+
+caption {
+		padding: 0 0 .5em 0;
+		text-align: left;
+		font-size: 1.4em;
+		font-weight: bold;
+		text-transform: uppercase;
+		color: #333;
+		background: transparent;
+}
+
+/* =links
+----------------------------------------------- */
+
+table a {
+		color:#950000;
+		text-decoration:none;
+}
+
+table a:link {}
+
+table a:visited {
+		font-weight:normal;
+		color:#666;
+		text-decoration: line-through;
+}
+
+table a:hover {
+		border-bottom: 1px dashed #bbb;
+}
+
+/* =head =foot
+----------------------------------------------- */
+
+thead th, tfoot th, tfoot td {
+		background:#333;
+		color:#fff
+}
+
+tfoot td {
+		text-align:right
+}
+
+/* =body
+----------------------------------------------- */
+
+.noborders {
+border:0px;
+}
+
+
+.borders {
+		border-bottom: solid 1px #333333;
+		border-right:solid 1px #333333;
+}
+
+.borders tr {
+		border-bottom: solid 1px #333333;
+}
+
+tbody th {
+		white-space: nowrap;
+}
+
+tbody th a {
+		color:#333;
+}
+
+.odd {}
+
+tbody.changeing tr:hover {
+		background:#fafafa
+}
+
+
+/* =form and input
+----------------------------------------------------*/
+
+.input{
+background:#FFF7D1;
+border:2px solid #000000;
+
+}
+
+.Button {
+background-color:#437ABB;
+  margin: 0;
+color:white;
+  padding: 3px 2px;
+  cursor: pointer;
+  cursor: hand;
+  border: 1px outset #ccc;
+}
+.Button:active {
+  border: 1px inset #ccc;
+}
+.Button:hover {
+  border-color: #9cf #69e #69e #7af;
+background-color:#7399C7;
+}
+.Button[disabled] {
+  cursor: default;
+  color: #888;
+}
+.Button[disabled]:hover {
+  border: 1px outset #ccc;
+}
+
+

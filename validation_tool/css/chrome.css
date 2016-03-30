@@ -1,0 +1,1075 @@
+/**
+ * The file contains styles for GWT widgets in the chrome theme.
+ *
+ * In order to maintain cross-browser compatibility, the following syntax is
+ * used to create IE6 specific style rules:
+ *    .Widget {
+ *      property: rule applies to all browsers
+ *      -property: rule applies only to IE6 (overrides previous rule)
+ *    }
+ *    * html .Widget {
+ *      property: rule applies to all versions of IE
+ *    }
+ */
+
+body, table td, select {
+  font-family: Arial Unicode MS, Arial, sans-serif;
+  font-size: small;
+}
+pre {
+  font-family: "courier new", courier;
+  font-size: small;
+}
+body {
+  color: black;
+  margin: 0px;
+  border: 0px;
+  padding: 0px;
+  background: #fff;
+  direction: ltr;
+}
+a, a:visited, a:hover {
+  color: #0000AA;
+}
+
+/**
+ * The reference theme can be used to determine when this style sheet has
+ * loaded.  Create a hidden div element with absolute position, assign the style
+ * name below, and attach it to the DOM.  Use a timer to detect when the
+ * element's height and width are set to 5px.
+ */
+.Reference-chrome {
+  height: 5px;
+  width: 5px;
+  zoom: 1;
+}
+
+.Button {
+  margin: 0;
+  padding: 3px 5px;
+  text-decoration: none;
+  font-size: small;
+  cursor: pointer;
+  cursor: hand;
+  background: url("images/hborder.png") repeat-x 0px -27px;
+  border: 1px outset #ccc;
+}
+.Button:active {
+  border: 1px inset #ccc;
+}
+.Button:hover {
+  border-color: #9cf #69e #69e #7af;
+}
+.Button[disabled] {
+  cursor: default;
+  color: #888;
+}
+.Button[disabled]:hover {
+  border: 1px outset #ccc;
+}
+
+.CheckBox {
+}
+.CheckBox-disabled {
+  color: #888;
+}
+
+.DecoratorPanel {
+}
+.DecoratorPanel .topCenter,
+.DecoratorPanel .bottomCenter {
+  background: url(images/hborder.png) repeat-x;
+}
+.DecoratorPanel .middleLeft,
+.DecoratorPanel .middleRight {
+  background: url(images/vborder.png) repeat-y;
+}
+.DecoratorPanel .topLeftInner,
+.DecoratorPanel .topRightInner,
+.DecoratorPanel .bottomLeftInner,
+.DecoratorPanel .bottomRightInner {
+  width: 5px;
+  height: 5px;
+  zoom: 1;
+}
+.DecoratorPanel .topLeft {
+  background: url(images/corner.png) no-repeat 0px 0px;
+  -background: url(images/corner_ie6.png) no-repeat 0px 0px;
+}
+.DecoratorPanel .topRight {
+  background: url(images/corner.png) no-repeat -5px 0px;
+  -background: url(images/corner_ie6.png) no-repeat -5px 0px;
+}
+.DecoratorPanel .bottomLeft {
+  background: url(images/corner.png) no-repeat 0px -5px;
+  -background: url(images/corner_ie6.png) no-repeat 0px -5px;
+}
+.DecoratorPanel .bottomRight {
+  background: url(images/corner.png) no-repeat -5px -5px;
+  -background: url(images/corner_ie6.png) no-repeat -5px -5px;
+}
+* html .DecoratorPanel .topLeftInner,
+* html .DecoratorPanel .topRightInner,
+* html .DecoratorPanel .bottomLeftInner,
+* html .DecoratorPanel .bottomRightInner {
+  width: 5px;
+  height: 5px;
+  overflow: hidden;
+}
+
+.DialogBox .Caption {
+  background: #ebebeb url(images/hborder.png) repeat-x 0px -2003px;
+  padding: 4px 4px 4px 8px;
+  cursor: default;
+  border-bottom: 1px solid #bbbbbb;
+  border-top: 5px solid #e3e3e3;
+}
+.DialogBox .dialogContent {
+}
+.DialogBox .dialogMiddleCenter {
+  padding: 3px;
+  background: white;
+}
+.DialogBox .dialogBottomCenter {
+  background: url(images/hborder.png) repeat-x 0px -4px;
+  -background: url(images/hborder_ie6.png) repeat-x 0px -4px;
+}
+.DialogBox .dialogMiddleLeft {
+  background: url(images/vborder.png) repeat-y;
+}
+.DialogBox .dialogMiddleRight {
+  background: url(images/vborder.png) repeat-y -4px 0px;
+  -background: url(images/vborder_ie6.png) repeat-y -4px 0px;
+}
+.DialogBox .dialogTopLeftInner {
+  width: 5px;
+  zoom: 1;
+}
+.DialogBox .dialogTopRightInner {
+  width: 8px;
+  zoom: 1;
+}
+.DialogBox .dialogBottomLeftInner {
+  width: 5px;
+  height: 8px;
+  zoom: 1;
+}
+.DialogBox .dialogBottomRightInner {
+  width: 5px;
+  height: 8px;
+  zoom: 1;
+}
+.DialogBox .dialogTopLeft {
+  background: url(images/corner.png) no-repeat -13px 0px;
+  -background: url(images/corner_ie6.png) no-repeat -13px 0px;
+}
+.DialogBox .dialogTopRight {
+  background: url(images/corner.png) no-repeat -18px 0px;
+  -background: url(images/corner_ie6.png) no-repeat -18px 0px;
+}
+.DialogBox .dialogBottomLeft {
+  background: url(images/corner.png) no-repeat 0px -15px;
+  -background: url(images/corner_ie6.png) no-repeat 0px -15px;
+}
+.DialogBox .dialogBottomRight {
+  background: url(images/corner.png) no-repeat -5px -15px;
+  -background: url(images/corner_ie6.png) no-repeat -5px -15px;
+}
+* html .DialogBox .dialogTopLeftInner {
+  width: 5px;
+  overflow: hidden;
+}
+* html .DialogBox .dialogTopRightInner {
+  width: 8px;
+  overflow: hidden;
+}
+* html .DialogBox .dialogBottomLeftInner {
+  width: 5px;
+  height: 8px;
+  overflow: hidden;
+}
+* html .DialogBox .dialogBottomRightInner {
+  width: 8px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.DisclosurePanel {
+}
+.DisclosurePanel-open {
+}
+.DisclosurePanel-closed {
+}
+.DisclosurePanel .header,
+.DisclosurePanel .header a,
+.DisclosurePanel .header td {
+  text-decoration: none;  /* Remove underline from header */
+  color: black; 
+  cursor: pointer;
+  cursor: hand;
+}
+.DisclosurePanel .content {
+  border-left: 3px solid #e3e3e3;
+  padding: 4px 0px 4px 8px;
+  margin-left: 6px;
+}
+
+.FileUpload {
+}
+
+.Frame {
+  border-top: 2px solid #666;
+  border-left: 2px solid #666;
+  border-right: 2px solid #bbb;
+  border-bottom: 2px solid #bbb;
+}
+
+.HorizontalSplitPanel {
+}
+.HorizontalSplitPanel .hsplitter {
+  cursor: move;
+  border: 0px; 
+  background: #91c0ef url(images/vborder.png) repeat-y;
+}
+.VerticalSplitPanel {
+}
+.VerticalSplitPanel .vsplitter {
+  cursor: move;
+  border: 0px; 
+  background: #91c0ef url(images/hborder.png) repeat-x;
+}
+
+.HTML {
+}
+
+.Hyperlink {
+}
+
+.Image {
+}
+
+.Label {
+}
+
+.ListBox {
+}
+
+.MenuBar {
+  cursor: default;
+}
+.MenuBar .MenuItem {
+  cursor: default;
+}
+.MenuBar .MenuItem-selected {
+  background: #cdcdcd;
+}
+.MenuBar-horizontal {
+  background: #ebebeb url(images/hborder.png) repeat-x 0px -2003px;
+  border: 1px solid #BBBBBB;
+}
+.MenuBar-horizontal .MenuItem {
+  padding: 0px 10px;
+  vertical-align: bottom;
+  color: #666666;
+  font-weight: bold;
+}
+.MenuBar-horizontal .MenuItemSeparator {
+  width: 1px;
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+  border-left: 1px solid #888888;
+  background: white;
+}
+.MenuBar-horizontal .MenuItemSeparator .menuSeparatorInner {
+  width: 1px;
+  height: 1px;
+  background: white; 
+}
+.MenuBar-vertical {
+  margin-top: 0px;
+  margin-left: 0px;
+  background: white;
+}
+.MenuBar-vertical table {
+  border-collapse: collapse;
+}
+.MenuBar-vertical .MenuItem {
+  padding: 4px 14px 4px 1px;
+}
+.MenuBar-vertical .MenuItemSeparator {
+  padding: 2px 0px;
+}
+.MenuBar-vertical .MenuItemSeparator .menuSeparatorInner {
+  height: 1px;
+  padding: 0px;
+  border: 0px;
+  border-top: 1px solid #777777;
+  background: #ddddee;
+  overflow: hidden;
+}
+.MenuBar-vertical .subMenuIcon {
+  padding-right: 4px;
+}
+.MenuBar-vertical .subMenuIcon-selected {
+  background: #cdcdcd;
+}
+.MenuBarPopup {
+  margin: 0px 0px 0px 3px;
+}
+.MenuBarPopup .menuPopupTopCenter {
+  background: url(images/hborder.png) 0px -12px repeat-x;
+}
+.MenuBarPopup .menuPopupBottomCenter {
+  background: url(images/hborder.png) 0px -13px repeat-x;
+  -background: url(images/hborder_ie6.png) 0px -13px repeat-x;
+}
+.MenuBarPopup .menuPopupMiddleLeft {
+  background: url(images/vborder.png) -12px 0px repeat-y;
+  -background: url(images/vborder_ie6.png) -12px 0px repeat-y;
+}
+.MenuBarPopup .menuPopupMiddleRight {
+  background: url(images/vborder.png) -13px 0px repeat-y;
+  -background: url(images/vborder_ie6.png) -13px 0px repeat-y;
+}
+.MenuBarPopup .menuPopupTopLeftInner {
+  width: 5px;
+  height: 5px;
+  zoom: 1;
+}
+.MenuBarPopup .menuPopupTopRightInner {
+  width: 8px;
+  height: 5px;
+  zoom: 1;
+}
+.MenuBarPopup .menuPopupBottomLeftInner {
+  width: 5px;
+  height: 8px;
+  zoom: 1;
+}
+.MenuBarPopup .menuPopupBottomRightInner {
+  width: 8px;
+  height: 8px;
+  zoom: 1;
+}
+.MenuBarPopup .menuPopupTopLeft {
+  background: url(images/corner.png) no-repeat 0px -36px;
+  -background: url(images/corner_ie6.png) no-repeat 0px -36px;
+}
+.MenuBarPopup .menuPopupTopRight {
+  background: url(images/corner.png) no-repeat -5px -36px;
+  -background: url(images/corner_ie6.png) no-repeat -5px -36px;
+}
+.MenuBarPopup .menuPopupBottomLeft {
+  background: url(images/corner.png) no-repeat 0px -41px;
+  -background: url(images/corner_ie6.png) no-repeat 0px -41px;
+}
+.MenuBarPopup .menuPopupBottomRight {
+  background: url(images/corner.png) no-repeat -5px -41px;
+  -background: url(images/corner_ie6.png) no-repeat -5px -41px;
+}
+* html .MenuBarPopup .menuPopupTopLeftInner {
+  width: 5px;
+  height: 5px;
+  overflow: hidden;
+}
+* html .MenuBarPopup .menuPopupTopRightInner {
+  width: 8px;
+  height: 5px;
+  overflow: hidden;
+}
+* html .MenuBarPopup .menuPopupBottomLeftInner {
+  width: 5px;
+  height: 8px;
+  overflow: hidden;
+}
+* html .MenuBarPopup .menuPopupBottomRightInner {
+  width: 8px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.PasswordTextBox {
+  padding: 2px;
+}
+.PasswordTextBox-readonly {
+  color: #888;
+}
+
+.PopupPanel {
+  border: 3px solid #e3e3e3;
+  padding: 3px;
+  background: white;
+}
+
+.DecoratedPopupPanel .popupContent {
+}
+.DecoratedPopupPanel .popupMiddleCenter {
+  padding: 3px;
+  background: #e3e3e3;
+}
+.DecoratedPopupPanel .popupTopCenter {
+  background: url(images/hborder.png) repeat-x;
+}
+.DecoratedPopupPanel .popupBottomCenter {
+  background: url(images/hborder.png) repeat-x 0px -4px;
+  -background: url(images/hborder_ie6.png) repeat-x 0px -4px;
+}
+.DecoratedPopupPanel .popupMiddleLeft {
+  background: url(images/vborder.png) repeat-y;
+}
+.DecoratedPopupPanel .popupMiddleRight {
+  background: url(images/vborder.png) repeat-y -4px 0px;
+  -background: url(images/vborder_ie6.png) repeat-y -4px 0px;
+}
+.DecoratedPopupPanel .popupTopLeftInner {
+  width: 5px;
+  height: 5px;
+  zoom: 1;
+}
+.DecoratedPopupPanel .popupTopRightInner {
+  width: 8px;
+  height: 5px;
+  zoom: 1;
+}
+.DecoratedPopupPanel .popupBottomLeftInner {
+  width: 5px;
+  height: 8px;
+  zoom: 1;
+}
+.DecoratedPopupPanel .popupBottomRightInner {
+  width: 8px;
+  height: 8px;
+  zoom: 1;
+}
+.DecoratedPopupPanel .popupTopLeft {
+  background: url(images/corner.png) no-repeat 0px -10px;
+  -background: url(images/corner_ie6.png) no-repeat 0px -10px;
+}
+.DecoratedPopupPanel .popupTopRight {
+  background: url(images/corner.png) no-repeat -5px -10px;
+  -background: url(images/corner_ie6.png) no-repeat -5px -10px;
+}
+.DecoratedPopupPanel .popupBottomLeft {
+  background: url(images/corner.png) no-repeat 0px -15px;
+  -background: url(images/corner_ie6.png) no-repeat 0px -15px;
+}
+.DecoratedPopupPanel .popupBottomRight {
+  background: url(images/corner.png) no-repeat -5px -15px;
+  -background: url(images/corner_ie6.png) no-repeat -5px -15px;
+}
+* html .DecoratedPopupPanel .popupTopLeftInner {
+  width: 5px;
+  height: 5px;
+  overflow: hidden;
+}
+* html .DecoratedPopupPanel .popupTopRightInner {
+  width: 8px;
+  height: 5px;
+  overflow: hidden;
+}
+* html .DecoratedPopupPanel .popupBottomLeftInner {
+  width: 5px;
+  height: 8px;
+  overflow: hidden;
+}
+* html .DecoratedPopupPanel .popupBottomRightInner {
+  width: 8px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.PushButton-up,
+.PushButton-up-hovering,
+.PushButton-up-disabled,
+.PushButton-down,
+.PushButton-down-hovering,
+.PushButton-down-disabled {
+  margin: 0;
+  text-decoration: none;
+  background: url("images/hborder.png") repeat-x 0px -27px;
+}
+.PushButton-up,
+.PushButton-up-hovering,
+.PushButton-up-disabled {
+  padding: 3px 5px 3px 5px;
+}
+.PushButton-up {
+  border: 1px outset #ccc;
+  cursor: pointer;
+  cursor: hand;
+}
+.PushButton-up-hovering {
+  border: 1px outset;
+  border-color: #9cf #69e #69e #7af;
+  cursor: pointer;
+  cursor: hand;
+}
+.PushButton-up-disabled {
+  border: 1px outset #ccc;
+  cursor: default;
+  opacity: .5;
+  filter: alpha(opacity=40);
+  zoom: 1;
+}
+.PushButton-down,
+.PushButton-down-hovering,
+.PushButton-down-disabled {
+  padding: 4px 4px 2px 6px;
+}
+.PushButton-down {
+  border: 1px inset #666;
+  cursor: pointer;
+  cursor: hand;
+}
+.PushButton-down-hovering {
+  border: 1px inset;
+  border-color: #9cf #69e #69e #7af;
+  cursor: pointer;
+  cursor: hand;
+}
+.PushButton-down-disabled {
+  border: 1px outset #ccc;
+  cursor: default;
+  opacity: 0.5;
+  filter: alpha(opacity=40);
+  zoom: 1;
+}
+
+.RadioButton {
+}
+.RadioButton-disabled {
+  color: #888;
+}
+
+.RichTextArea {
+}
+.hasRichTextToolbar {
+  border: 0px;
+}
+.RichTextToolbar {
+  background: #ebebeb url(images/hborder.png) repeat-x 0px -2003px;
+  border-bottom: 1px solid #BBBBBB;
+  padding: 3px;
+  margin: 0px;
+}
+.RichTextToolbar .PushButton-up {
+  padding: 0px 1px 0px 0px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  border-width: 1px; 
+}
+.RichTextToolbar .PushButton-up-hovering {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 1px 0px 0px;
+  border-width: 1px; 
+}
+.RichTextToolbar .PushButton-down {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 0px 0px 1px;
+  border-width: 1px; 
+}
+.RichTextToolbar .PushButton-down-hovering {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 0px 0px 1px;
+  border-width: 1px; 
+}
+.RichTextToolbar .ToggleButton-up {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 1px 0px 0px;
+  border-width: 1px;
+}
+.RichTextToolbar .ToggleButton-up-hovering {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 1px 0px 0px;
+  border-width: 1px;
+}
+.RichTextToolbar .ToggleButton-down {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 0px 0px 1px;
+  border-width: 1px;
+}
+.RichTextToolbar .ToggleButton-down-hovering {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 0px 0px 0px 1px;
+  border-width: 1px;
+}
+
+.StackPanel {
+  border-bottom: 1px solid #bbbbbb;
+}
+.StackPanel .StackPanelItem {
+  cursor: pointer;
+  cursor: hand;
+  font-weight: bold;
+  font-size: 1.3em;
+  padding: 3px;
+  border: 1px solid #bbbbbb;
+  border-bottom: 0px;
+  background: #d3def6 url(images/hborder.png) repeat-x 0px -989px;
+}
+.StackPanel .StackPanelContent {
+  border: 1px solid #bbbbbb;
+  border-bottom: 0px;
+  background: white;
+  padding: 2px 2px 10px 5px;
+}
+
+.DecoratedStackPanel {
+  border-bottom: 1px solid #bbbbbb;
+}
+.DecoratedStackPanel .StackPanelContent {
+  border: 1px solid #bbbbbb;
+  border-bottom: 0px;
+  background: white;
+  padding: 2px 2px 10px 5px;
+}
+.DecoratedStackPanel .StackPanelItem {
+  cursor: pointer;
+  cursor: hand;
+}
+.DecoratedStackPanel .stackItemTopLeft,
+.DecoratedStackPanel .stackItemTopRight {
+  height: 6px;
+  width: 6px;
+  zoom: 1;
+}
+.DecoratedStackPanel .stackItemTopLeft {
+  border-left: 1px solid #bbbbbb;
+  background: #e4e4e4 url(images/corner.png) no-repeat 0px -49px;
+  -background: #e4e4e4 url(images/corner_ie6.png) no-repeat 0px -49px;
+}
+.DecoratedStackPanel .stackItemTopRight {
+  border-right: 1px solid #bbbbbb;
+  background: #e4e4e4 url(images/corner.png) no-repeat -6px -49px;
+  -background: #e4e4e4 url(images/corner_ie6.png) no-repeat -6px -49px;
+}
+.DecoratedStackPanel .stackItemTopLeftInner,
+.DecoratedStackPanel .stackItemTopRightInner {
+  width: 1px;
+  height: 1px;
+}
+* html .DecoratedStackPanel .stackItemTopLeftInner,
+* html .DecoratedStackPanel .stackItemTopRightInner {
+  width: 6px;
+  height: 6px;
+  overflow: hidden;
+}
+.DecoratedStackPanel .stackItemTopCenter {
+  background: url(images/hborder.png) 0px -21px repeat-x;
+}
+.DecoratedStackPanel .stackItemMiddleLeft {
+  background: #d3def6 url(images/hborder.png) repeat-x 0px -989px;
+  border-left: 1px solid #bbbbbb;
+}
+.DecoratedStackPanel .stackItemMiddleLeftInner,
+.DecoratedStackPanel .stackItemMiddleRightInner {
+  width: 1px;
+  height: 1px;
+}
+.DecoratedStackPanel .stackItemMiddleRight {
+  background: #d3def6 url(images/hborder.png) repeat-x 0px -989px;
+  border-right: 1px solid #bbbbbb;
+}
+.DecoratedStackPanel .stackItemMiddleCenter {
+  font-weight: bold;
+  font-size: 1.3em;
+  background: #d3def6 url(images/hborder.png) repeat-x 0px -989px;
+}
+.DecoratedStackPanel .StackPanelItem-first .stackItemTopRight,
+.DecoratedStackPanel .StackPanelItem-first .stackItemTopLeft {
+  border: 0px;
+  background-color: white;
+}
+.DecoratedStackPanel .StackPanelItem-below-selected .stackItemTopLeft,
+.DecoratedStackPanel .StackPanelItem-below-selected .stackItemTopRight {
+  background-color: white;
+}
+
+.SuggestBox {
+  padding: 2px;
+}
+.SuggestBoxPopup {
+  margin-left: 3px;
+}
+.SuggestBoxPopup .item {
+  padding: 2px 6px;
+  color: #424242;
+  cursor: default;
+}
+.SuggestBoxPopup .item-selected {
+  background: #cdcdcd;
+}
+.SuggestBoxPopup .suggestPopupContent {
+  background: white;
+}
+.SuggestBoxPopup .suggestPopupTopCenter {
+  background: url(images/hborder.png) repeat-x;
+}
+.SuggestBoxPopup .suggestPopupBottomCenter {
+  background: url(images/hborder.png) repeat-x 0px -4px;
+  -background: url(images/hborder_ie6.png) repeat-x 0px -4px;
+}
+.SuggestBoxPopup .suggestPopupMiddleLeft {
+  background: url(images/vborder.png) repeat-y;
+}
+.SuggestBoxPopup .suggestPopupMiddleRight {
+  background: url(images/vborder.png) repeat-y -4px 0px;
+  -background: url(images/vborder_ie6.png) repeat-y -4px 0px;
+}
+.SuggestBoxPopup .suggestPopupTopLeftInner {
+  width: 5px;
+  height: 5px;
+  zoom: 1;  
+}
+.SuggestBoxPopup .suggestPopupTopRightInner {
+  width: 8px;
+  height: 5px;
+  zoom: 1;
+}
+.SuggestBoxPopup .suggestPopupBottomLeftInner {
+  width: 5px;
+  height: 8px;
+  zoom: 1;
+}
+.SuggestBoxPopup .suggestPopupBottomRightInner {
+  width: 8px;
+  height: 8px;
+  zoom: 1;
+}
+.SuggestBoxPopup .suggestPopupTopLeft {
+  background: url(images/corner.png) no-repeat 0px -23px;
+  -background: url(images/corner_ie6.png) no-repeat 0px -23px;
+}
+.SuggestBoxPopup .suggestPopupTopRight {
+  background: url(images/corner.png) no-repeat -5px -23px;
+  -background: url(images/corner_ie6.png) no-repeat -5px -23px;
+}
+.SuggestBoxPopup .suggestPopupBottomLeft {
+  background: url(images/corner.png) no-repeat 0px -28px;
+  -background: url(images/corner_ie6.png) no-repeat 0px -28px;
+}
+.SuggestBoxPopup .suggestPopupBottomRight {
+  background: url(images/corner.png) no-repeat -5px -28px;
+  -background: url(images/corner_ie6.png) no-repeat -5px -28px;
+}
+* html .SuggestBoxPopup .suggestPopupTopLeftInner {
+  width: 5px;
+  height: 5px;
+  overflow: hidden;
+}
+* html .SuggestBoxPopup .suggestPopupTopRightInner {
+  width: 8px;
+  height: 5px;
+  overflow: hidden;
+}
+* html .SuggestBoxPopup .suggestPopupBottomLeftInner {
+  width: 5px;
+  height: 8px;
+  overflow: hidden;
+}
+* html .SuggestBoxPopup .suggestPopupBottomRightInner {
+  width: 8px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.TabBar {
+}
+.TabBar .TabBarFirst {
+  width: 5px;  /* first tab distance from the left */
+}
+.TabBar .TabBarRest {
+}
+.TabBar .TabBarItem {
+  margin-left: 6px;
+  padding: 3px 6px 3px 6px;
+  cursor: pointer;
+  cursor: hand;
+  color: black;
+  font-weight: bold;
+  text-align: center;
+  background: #e3e3e3;
+}
+.TabBar .TabBarItem-selected {
+  cursor: default;
+  background: #bcbcbc;
+} 
+.TabBar .TabBarItem-disabled {
+  cursor: default;
+  color: #999999;
+}
+.TabPanel {
+}
+.TabPanelBottom {
+  border-color: #bcbcbc;
+  border-style: solid;
+  border-width: 3px 2px 2px;
+  overflow: hidden;
+  padding: 6px;
+}
+
+.DecoratedTabBar {
+}
+.DecoratedTabBar .TabBarFirst {
+  width: 5px;  /* first tab distance from the left */
+}
+.DecoratedTabBar .TabBarRest {
+}
+.DecoratedTabBar .TabBarItem {
+  border-collapse: collapse;
+  margin-left: 6px;
+}
+.DecoratedTabBar .tabTopCenter {
+  padding: 0px;
+  background: #e3e3e3;
+}
+.DecoratedTabBar .tabTopLeft,
+.DecoratedTabBar .tabTopRight {
+  padding: 0px;
+  zoom: 1;
+}
+.DecoratedTabBar .tabTopLeftInner,
+.DecoratedTabBar .tabTopRightInner {
+  width: 6px;
+  height: 6px;
+}
+.DecoratedTabBar .tabTopLeft {
+  background: url(images/corner.png) no-repeat 0px -55px;
+  -background: url(images/corner_ie6.png) no-repeat 0px -55px;
+}
+.DecoratedTabBar .tabTopRight {
+  background: url(images/corner.png) no-repeat -6px -55px;
+  -background: url(images/corner_ie6.png) no-repeat -6px -55px;
+}
+* html .DecoratedTabBar .tabTopLeftInner,
+* html .DecoratedTabBar .tabTopRightInner {
+  width: 6px;
+  height: 6px;
+  overflow: hidden;
+}
+.DecoratedTabBar .tabMiddleLeft,
+.DecoratedTabBar .tabMiddleRight {
+  width: 6px;
+  padding: 0px;
+  background: #e3e3e3 url(images/hborder.png) repeat-x 0px -1463px;
+}
+.DecoratedTabBar .tabMiddleLeftInner,
+.DecoratedTabBar .tabMiddleRightInner {
+  width: 1px;
+  height: 1px;
+}
+.DecoratedTabBar .tabMiddleCenter {
+  padding: 0px 4px 2px 4px;
+  cursor: pointer;
+  cursor: hand;
+  color: black;
+  font-weight: bold;
+  text-align: center;
+  background: #e3e3e3 url(images/hborder.png) repeat-x 0px -1463px;
+}
+.DecoratedTabBar .TabBarItem-selected .tabTopCenter {
+  background: #747474;
+}
+.DecoratedTabBar .TabBarItem-selected .tabTopLeft {
+  background-position: 0px -61px;
+}
+.DecoratedTabBar .TabBarItem-selected .tabTopRight {
+  background-position: -6px -61px;
+}
+.DecoratedTabBar .TabBarItem-selected .tabMiddleLeft,
+.DecoratedTabBar .TabBarItem-selected .tabMiddleRight {
+  background: #bcbcbc url(images/hborder.png) repeat-x 0px -2511px;
+}
+.DecoratedTabBar .TabBarItem-selected .tabMiddleCenter {
+  cursor: default;
+  background: #bcbcbc url(images/hborder.png) repeat-x 0px -2511px;
+  color: white;
+}
+.DecoratedTabBar .TabBarItem-disabled .tabMiddleCenter {
+  cursor: default;
+  color: #999999;
+}
+
+.TextArea {
+  padding: 2px;
+}
+.TextArea-readonly {
+  color: #888;
+}
+
+.TextBox {
+  padding: 2px;
+}
+.TextBox-readonly {
+  color: #888;
+}
+
+.ToggleButton-up,
+.ToggleButton-up-hovering,
+.ToggleButton-up-disabled,
+.ToggleButton-down,
+.ToggleButton-down-hovering,
+.ToggleButton-down-disabled {
+  margin: 0;
+  text-decoration: none;
+  background: url("images/hborder.png") repeat-x 0px -27px;
+}
+.ToggleButton-up,
+.ToggleButton-up-hovering,
+.ToggleButton-up-disabled {
+  padding: 3px 5px 3px 5px;
+}
+.ToggleButton-up {
+  border: 1px outset #ccc;
+  cursor: pointer;
+  cursor: hand;
+}
+.ToggleButton-up-hovering {
+  border: 1px outset;
+  border-color: #9cf #69e #69e #7af;
+  cursor: pointer;
+  cursor: hand;
+}
+.ToggleButton-up-disabled {
+  border: 1px outset #ccc;
+  cursor: default;
+  opacity: .5;
+  zoom: 1;
+  filter: alpha(opacity=40);
+}
+.ToggleButton-down,
+.ToggleButton-down-hovering,
+.ToggleButton-down-disabled {
+  padding: 4px 4px 2px 6px;
+}
+.ToggleButton-down {
+  background-position: 0 -513px;
+  border: 1px inset #ccc;
+  cursor: pointer;
+  cursor: hand;
+}
+.ToggleButton-down-hovering {
+  background-position: 0 -513px;
+  border: 1px inset;
+  border-color: #9cf #69e #69e #7af;
+  cursor: pointer;
+  cursor: hand;
+}
+.ToggleButton-down-disabled {
+  background-position: 0 -513px;
+  border: 1px inset #ccc;
+  cursor: default;
+  opacity: .5;
+  zoom: 1;
+  filter: alpha(opacity=40);
+}
+
+.Tree .TreeItem {
+  padding: 1px 0px;
+  margin: 0px;
+  white-space: nowrap;
+  cursor: hand;
+  cursor: pointer;
+}
+.Tree .TreeItem-selected {
+  background: #93c2f1 url(images/hborder.png) repeat-x 0px -1463px;
+}
+.TreeItem .RadioButton input,
+.TreeItem .CheckBox input {
+  margin-left: 0px;
+}
+* html .TreeItem .RadioButton input,
+* html .TreeItem .CheckBox input {
+  margin-left: -4px;
+}
+
+.DateBox input {
+  width: 8em;
+}
+.dateBoxFormatError {
+  background: #eed6d6;
+}
+.dateBoxPopup {
+}
+
+.DatePicker {
+  border: 1px solid #888;
+  cursor: default;
+}
+.DatePicker td,
+.datePickerMonthSelector td:focus {
+  outline: none
+}
+.datePickerDays {
+  width: 100%;
+  background: white;
+}
+.datePickerDay,
+.datePickerWeekdayLabel,
+.datePickerWeekendLabel {
+  font-size: 75%;
+  text-align: center;
+  padding: 4px;
+  outline: none;
+}
+.datePickerWeekdayLabel,
+.datePickerWeekendLabel {
+  background: #c1c1c1;
+  padding: 0px 4px 2px;
+  cursor: default;
+}
+.datePickerDay {
+  padding: 4px;
+  cursor: hand;
+  cursor: pointer;
+}
+.datePickerDayIsToday {
+  border: 1px solid black;
+  padding: 3px;
+}
+.datePickerDayIsWeekend {
+  background: #EEEEEE;
+}
+.datePickerDayIsFiller {
+  color: #888888;
+}
+.datePickerDayIsValue {
+  background: #abf;
+}
+.datePickerDayIsDisabled {
+  color: #AAAAAA;
+  font-style: italic;
+}
+.datePickerDayIsHighlighted {
+  background: #dde;
+}
+.datePickerDayIsValueAndHighlighted {
+  background: #ccf;
+}
+.datePickerMonthSelector {
+  background: #c1c1c1;
+  width: 100%;
+}
+td.datePickerMonth {
+  text-align: center;
+  vertical-align: center;
+  white-space: nowrap;
+  font-size: 70%;
+  font-weight: bold;
+}
+.datePickerPreviousButton,
+.datePickerNextButton {
+  font-size: 120%;
+  line-height: 1em;
+  cursor: hand;
+  cursor: pointer;
+  padding: 0px 4px;
+}

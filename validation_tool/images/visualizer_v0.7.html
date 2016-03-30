@@ -1,0 +1,650 @@
+<!-- What: Visualizes selected Datapoints(lat,lon) from xml file on google maps and generates a graph of SM Data from xml file 
+	Extended to feature more charting/graphing options
+	Marker clustering
+	Select by geographical Area
+	by entering lat,lng or by clicking in the map
+-->
+<!-- Author: Christoph Paulik -->
+<!-- Last Changed: 08.07.09 -->
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" dir="ltr" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script src="maxmin.js" type="text/javascript" charset="utf-8"></script>
+<script src="xhconn.js" type="text/javascript" charset="utf-8"></script>
+<!-- javascript libary for graphs -->
+
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false  &amp;key=ABQIAAAA9SXQHUHR9cGt3FtX1hwMzBTtqRdbkDXoigPc2uyjTvzNzcqPSBRnSo_wtQouZkKXNYBN4_SW-OyK1w"
+    type="text/javascript">
+  </script>
+<script src="http://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/release/src/markermanager.js"></script>
+ <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+
+<link rel="stylesheet" href="table_design.css">
+
+
+
+<script language="JavaScript">
+google.load('visualization', '1', {'packages':['annotatedtimeline']});
+var montharray=['Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov','Dec'];   //IE kapiert das Date Objekt sonst nicht
+
+ // load xml file with measurement tag and graph the values
+	function makeCharts(stationID){
+		loadingGif(stationID);		
+		var value=new Array();	
+		var time=new Array();
+		var tod=new Array();  //HH:mmtime of day
+		var year=new Array();
+		var month=new Array();
+		var day=new Array();
+		var label=new Array();	
+		var chartdata = new google.visualization.DataTable();	
+		GDownloadUrl("fakevalues.xml?dummy="+Math.random(), function(data) {
+        	var xml = GXml.parse(data);
+        	var mment = xml.documentElement.getElementsByTagName("measurement");
+	        chartdata.addColumn('date', 'Date');
+        	chartdata.addColumn('number', 'SM');
+        	chartdata.addRows(mment.length);
+		
+		for (var i = 0; i < mment.length; i++) {	
+			value[i]= parseInt(mment[i].getAttribute("value"));
+			time[i]=mment[i].getAttribute("time");
+			tod[i]=time[i].slice(11);								//time of day last 5 characters of timestring CEOP norm
+			year[i]=time[i].slice(0,4);								// like "2001/07/01 00:00"
+			month[i]=time[i].slice(5,7);
+			day[i]=time[i].slice(8,10);			
+			//chartdata.setValue(i,0,new Date(year[i],month[i],day[i],hh[i],mm[i],00));
+			var datum=tod[i]+' '+montharray[month[i]-1]+' '+day[i]+', '+year[i];
+			//var datum="00:00 July "+i+", 2007";
+			chartdata.setValue(i,0,new Date(datum));
+			chartdata.setValue(i,1,value[i]);
+		}
+
+        var chart = new google.visualization.AnnotatedTimeLine(document.getElementById(stationID));
+        chart.draw(chartdata, {displayAnnotations: false,scaleType:"maximize"});
+
+  
+
+ 		 });
+}
+
+ 
+//dojo.addOnLoad(makeCharts);
+  </script>
+
+
+	<script language="JavaScript">
+	var allmarkers = [];
+	var stationmarkers=[];
+	var netmarkers =[];
+	var map = null;
+	var polygon= null;
+	var mgr = null;
+	
+	function initialize() {
+  		
+  		if (GBrowserIsCompatible()) {
+        		map = new GMap2(document.getElementById("map_canvas"));
+        		map.setCenter(new GLatLng(20, 0), 2);
+        		map.setUIToDefault();
+			mgr = new MarkerManager(map);			//Marker manager active for this map
+
+		var locations = new Array();
+		//load the xml file and save the attributes in the array locations
+       		GDownloadUrl("fakestations.xml?dummy="+Math.random(), function(data) {
+        	var xml = GXml.parse(data);
+		var networks=xml.documentElement.getElementsByTagName("network");
+		for (var i = 0; i < networks.length; i++) {
+		
+			var uniqueNetworks=networks[i].getAttribute("networkID");
+			var latlngnet = new GLatLng(parseFloat(networks[i].getAttribute("lat")),parseFloat(networks[i].getAttribute("lng")));
+			addNetworkToForm(uniqueNetworks,i);
+         		var station = {latlng: latlngnet, networkID:uniqueNetworks};
+			var marker=createNetMarker(station);
+			netmarkers.push(marker);
+			
+		}
+		mgr.addMarkers(netmarkers,2,3);
+		mgr.refresh();
+        	var markers = xml.documentElement.getElementsByTagName("station");
+		
+        	for (var i = 0; i < markers.length; i++) {
+         			var stationID = markers[i].getAttribute("stationID");
+				var networkID = markers[i].getAttribute("networkID");
+          			var latlng = new GLatLng(parseFloat(markers[i].getAttribute("lat")),parseFloat(markers[i].getAttribute("lng")));
+         			var station = {latlng: latlng, stationID: stationID, networkID:networkID};
+				var marker=createMarker(station);
+				stationmarkers.push(marker);
+
+        	}
+		//alert(locations[1].latlng);
+		for (var i = 0; i < locations.length; i++){
+
+		
+		
+		}
+            	mgr.addMarkers(stationmarkers,4);						//Add station markers at zoomlevel 4
+															//Add network markers at beginning (zoomlevel 2)
+		mgr.refresh();
+          	allmarkers=stationmarkers.concat(netmarkers);
+        });  
+      		}
+		
+     
+    }
+
+//Create Markers and the <div> for the graph
+    function createMarker(station) {
+      //var newIcon = MapIconMaker.createMarkerIcon({width: 44, height: 44, primaryColor: "#00ff00"});
+       var tabs=[];
+	var marker = new GMarker(station.latlng,{title:station.networkID});//, {icon: newIcon});       
+	var html =station.stationID+"<br>"+marker.getTitle() + "<br>" + '<div  id="'+station.stationID+'" style="width: 400px; height: 200px;"></div>';
+	tabs.push(new GInfoWindowTab("Show Data",html));
+	html="Metadata..coming";
+	tabs.push(new GInfoWindowTab("Details",html));
+	html="Download Area ... coming";
+	tabs.push(new GInfoWindowTab("Download",html));
+
+      	GEvent.addListener(marker, 'click', function() {
+        marker.openInfoWindowTabsHtml(tabs);
+	document.getElementById("info_canvas").innerHTML="Publicationlist and Logos for Station: "+station.stationID; 
+	setTimeout(function(){makeCharts(station.stationID)},500);    //to give the browser time to realize where the div is, probably not necessary when the data is loaded from the server
+      	});
+	
+	return marker;	
+	
+}
+
+//Create Markers for the Networks
+    function createNetMarker(station) {
+      //var newIcon = MapIconMaker.createMarkerIcon({width: 44, height: 44, primaryColor: "#00ff00"});
+	var marker = new GMarker(station.latlng,{title:station.networkID});//, {icon: newIcon});       
+	var html ='<b>'+marker.getTitle()+'</b> <br> Abstract <br> Status .... <br> zoom in to see Stations';
+      	GEvent.addListener(marker, 'click', function() {
+        marker.openInfoWindowHtml(html);
+	document.getElementById("info_canvas").innerHTML="Publicationlist and Logos for Network: "+station.networkID; 
+      	});
+
+	return marker;	
+}
+		
+		
+function addNetworkToForm(networkID,i)  //Fill the MainSelector Form with options
+{	
+	document.MainSelector.Network.options[i+1]=new Option(networkID,networkID, false, false);
+
+}	
+function ToggleMarkers()
+{	
+	var x=document.getElementById("NetworkSelector");
+	var networkID=x.options[x.selectedIndex].text;
+	clearPolygon();
+	showMarkersWithTitle(networkID);
+}
+
+// show Markers that belong to a certain network with networkID
+function showMarkersWithTitle(networkID)
+{	
+	var networksToAdd=[];
+	var stationsToAdd=[];
+	mgr.clearMarkers();
+	if(networkID=="All Networks")
+	{ 	
+		mgr.addMarkers(netmarkers,2,3);
+		mgr.addMarkers(stationmarkers,4);
+	}
+	else
+	{
+	for(i=0;i<allmarkers.length;i++)
+	{
+		if(i<netmarkers.length)
+		{
+			if (netmarkers[i].getTitle()==networkID)
+			{	networksToAdd.push(netmarkers[i]);
+				
+			}
+		}
+		if(i<stationmarkers.length)
+		{
+			if (stationmarkers[i].getTitle()==networkID)
+			{	stationsToAdd.push(stationmarkers[i]);
+			}
+		}
+	}
+		mgr.addMarkers(networksToAdd,2,3);
+		mgr.addMarkers(stationsToAdd,4);
+	}
+	mgr.refresh();
+}
+
+function loadingGif(id)
+{
+	document.getElementById(id).innerHTML="<img src='/images/loading.gif'>";
+
+}
+
+//Lat and Lng from Form an draw a Rectangle on the map 
+function SelectLatLng(){
+	
+	//Valid float input?
+	var swLat=parseFloat(document.getElementById("sw_lat").value.replace(',','.'));      //allow , and . as comma
+	var swLng=parseFloat(document.getElementById("sw_lng").value.replace(',','.'));
+	var neLat=parseFloat(document.getElementById("ne_lat").value.replace(',','.'));
+	var neLng=parseFloat(document.getElementById("ne_lng").value.replace(',','.'));
+	if (isNaN(swLat) || isNaN(swLng) || isNaN(neLat) || isNaN(neLng))
+	{ alert("not a valid input"); return null;
+	}
+	clearPolygon();
+	MarkersInside(swLat, swLng,neLat, neLng);
+
+	drawPolygon(new GLatLng(swLat, swLng),new GLatLng(neLat, neLng));
+	zoomToPolygon();
+}
+
+function addIcon(icon) { // Add icon attributes
+
+ icon.iconSize = new GSize(11, 11);
+ icon.dragCrossSize = new GSize(0, 0);
+ icon.shadowSize = new GSize(11, 11);
+ icon.iconAnchor = new GPoint(5, 5);
+// icon.infoWindowAnchor = new GPoint(5, 1);
+}
+
+
+
+//Select 2 points from the map and draw a polygon
+function SelectFromMap(){
+	ToggleMarkers();	
+	var square = new GIcon();
+  	square.image = "/images/square.png";
+  	addIcon(square);
+
+	document.getElementById("selectStatus").innerHTML="Select the first point in the map";
+	this.counter = 0;
+      	this.firstLat=0;
+	this.firstLng=0;
+	this.secondLat=0;
+	this.secondLng=0;
+	var maka=null;
+      	var myEventListener = GEvent.bind(map, "click", this, function(overlay, latlng) {
+        	      	if(this.counter==0)
+			{	this.firstLat=latlng.lat();
+				this.firstLng=latlng.lng();
+				this.counter++;
+				maka=new GMarker(new GLatLng(this.firstLat,this.firstLng),{icon:square});
+				map.addOverlay(maka);
+				document.getElementById("sw_lat").value=this.firstLat;
+				document.getElementById("sw_lng").value=this.firstLng;
+			        document.getElementById("selectStatus").innerHTML="Select the second point in the map";
+			}
+		       else if(this.counter==1)
+			{	this.secondLat=latlng.lat();
+				this.secondLng=latlng.lng();
+				GEvent.removeListener(myEventListener);
+				drawPolygon(new GLatLng(this.firstLat, this.firstLng),new GLatLng(this.secondLat, this.secondLng));
+				MarkersInside(this.firstLat, this.firstLng,this.secondLat,this.secondLng);
+				zoomToPolygon();
+				map.removeOverlay(maka);
+				document.getElementById("ne_lat").value=this.secondLat;
+				document.getElementById("ne_lng").value=this.secondLng;
+				document.getElementById("selectStatus").innerHTML="Press the button and select 2 points in the map";
+				
+         		}
+      }); 
+    }
+
+
+function MarkersInside(firstlat,firstlng,secondlat,secondlng){
+	var networksToAdd=[];
+	var stationsToAdd=[];
+
+	//Find sw and ne lat and lng and create GLatLngBounds object
+	var swLat = 0;
+  	var swLng =0;
+  	var neLat = 0;
+  	var neLng = 0;
+
+	if(firstlat<secondlat){ swLat=firstlat; neLat=secondlat;}else{neLat=firstlat;swLat=secondlat;}
+	if((firstlng+180)-(secondlng+180)<(secondlng+180)-(firstlng+180))
+	{	neLng=secondlng;
+		swLng=firstlng;
+
+	}
+	else if(Math.abs((firstlng+180)-(secondlng+180))>180)
+	{	neLng=secondlng;
+		swLng=firstlng;
+	}
+	else{
+		neLng=firstlng;
+		swLng=secondlng;	
+	}
+	selection=new GLatLngBounds(new GLatLng(swLat,swLng),new GLatLng(neLat,neLng));
+	
+	mgr.clearMarkers();
+	for(i=0;i<allmarkers.length;i++)
+	{
+		if(i<netmarkers.length)
+		{
+			if (selection.containsLatLng(netmarkers[i].getLatLng()))
+			{	networksToAdd.push(netmarkers[i]);
+				
+			}
+		}
+		if(i<stationmarkers.length)
+		{
+			if (selection.containsLatLng(stationmarkers[i].getLatLng()))
+			{	stationsToAdd.push(stationmarkers[i]);
+			}
+		}
+	}
+	mgr.addMarkers(networksToAdd,2,3);
+	mgr.addMarkers(stationsToAdd,4);
+	mgr.refresh();
+}
+
+
+function clearPolygon(){ 	
+	if(polygon!=null)
+	{ map.removeOverlay(polygon);
+	}	
+
+}
+
+function drawPolygon(sw,ne){
+  var swLat = sw.lat();
+  var swLng = sw.lng();
+  var neLat = ne.lat();
+  var neLng = ne.lng();
+
+    	polygon = new GPolygon([
+    	new GLatLng(swLat,swLng),
+    	new GLatLng(swLat,neLng),
+    	new GLatLng(neLat,neLng),
+    	new GLatLng(neLat,swLng),
+    	new GLatLng(swLat,swLng)
+  	], "#003ff3", 2, 1, "#0000ff", 0.1);
+  	map.addOverlay(polygon);
+
+
+}
+
+function zoomToPolygon(){
+  var bounds = polygon.getBounds();
+  map.setCenter(bounds.getCenter());
+  map.setZoom(map.getBoundsZoomLevel(bounds));
+
+}
+
+function ReSet(){
+	document.getElementById("NetworkSelector").selectedIndex=0;
+	ToggleMarkers();
+	document.getElementById("sw_lat").value='';
+	document.getElementById("sw_lng").value='';
+	document.getElementById("ne_lat").value='';
+	document.getElementById("ne_lng").value='';
+
+	
+
+}
+
+	</script>
+	<title>in-situ SM</title></head>
+
+	<body onload="initialize()" onunload="GUnload()">
+	
+<table class="wrapper" width="100%">
+<tr>
+<td class="borders" style="width:20%; height:80%;"><div id="form_canvas" >
+	<FORM name="MainSelector" method="POST" action="">
+		<table class="form">
+		<tr class="header">		
+		<td colspan=3>Select Data by Networks</td>
+		</tr>
+		<tr>
+		<td colspan=3>
+		<select name="Network" id="NetworkSelector" onchange="ToggleMarkers()" class="input">
+		<option size="15">All Networks</option>
+		</select>
+		</td>
+		</tr>
+		<tr class="header">
+		<td colspan=3>
+		Select Data by Latitude/Longitude</td></tr>
+		<tr>
+		<td>&nbsp;</td>
+		<td>Latitude</td>
+		<td>Longitude</td>	
+		</tr>
+		<tr>
+		<td>south-west corner</td>
+		<td><input type="text" id="sw_lat" size=10 class="input"></td>
+		<td><input type="text" id="sw_lng" size=10 class="input"></td> </tr>
+		<tr>
+		<td>north-east corner</td>
+		<td><input type="text" id="ne_lat" size=10 class="input"></td>
+		<td><input type="text" id="ne_lng" size=10 class="input"></td>
+		</tr>
+		<tr class="noborders">
+		<td colspan=3 align="right"><input type="button" id="okLatLng" value="Select" onclick="SelectLatLng()" class="Button"></td>
+		</tr>
+		<tr class="header">
+		<td colspan=3>Select Data from Map</td>
+		</tr>
+		<tr><td>
+		<input type="button" id="getLatLng" value="Select from Map" onclick="SelectFromMap()" class="Button">
+		</td><td colspan=2><div id="selectStatus">Press the button and select 2 points in the map</div></td></tr>
+		<tr class="header">
+		<td colspan=3>Select Time interval</td>
+		</tr>
+		<tr>
+		<td colspan=3><label>from</label> 
+		<select name="Year_start" id="Year_start" onchange="" class="input">
+		<option size="15" value=2009>2009</option>
+		<option size="15" value=2008>2008</option>
+		<option size="15" value=2007>2007</option>
+		<option size="15" value=2006>2006</option>
+		<option size="15" value=2005>2005</option>
+		<option size="15" value=2004>2004</option>
+		<option size="15" value=2003>2003</option>
+		<option size="15" value=2002>2002</option>
+		<option size="15" value=2001>2001</option>
+		<option size="15" value=2000>2000</option>
+		</select>
+		<select name="Month_start" id="Month_start" onchange="" class="input">
+		<option size="15" value=0>January</option>
+		<option size="15" value=1>Febuary</option>
+		<option size="15" value=2>March</option>
+		<option size="15" value=3>April</option>
+		<option size="15" value=4>May</option>
+		<option size="15" value=5>June</option>
+		<option size="15" value=6>July</option>
+		<option size="15" value=7>August</option>
+		<option size="15" value=8>September</option>
+		<option size="15" value=9>October</option>
+		<option size="15" value=10>November</option>
+		<option size="15" value=11>December</option>
+		</select>
+		<select name="Day_start" id="Day_start" onchange="" class="input">
+		<option size="15" value=1>01</option>
+		<option size="15" value=2>02</option>
+		<option size="15" value=3>03</option>
+		<option size="15" value=4>04</option>
+		<option size="15" value=5>05</option>
+		<option size="15" value=6>06</option>
+		<option size="15" value=7>07</option>
+		<option size="15" value=8>08</option>
+		<option size="15" value=9>09</option>
+		<option size="15" value=10>10</option>
+		<option size="15" value=11>11</option>
+		<option size="15" value=12>12</option>
+		<option size="15" value=13>13</option>
+		<option size="15" value=14>14</option>
+		<option size="15" value=15>15</option>
+		<option size="15" value=16>16</option>
+		<option size="15" value=17>17</option>
+		<option size="15" value=18>18</option>
+		<option size="15" value=19>19</option>
+		<option size="15" value=20>20</option>
+		<option size="15" value=21>21</option>
+		<option size="15" value=22>22</option>
+		<option size="15" value=23>23</option>
+		<option size="15" value=24>24</option>
+		<option size="15" value=25>25</option>
+		<option size="15" value=26>26</option>
+		<option size="15" value=27>27</option>
+		<option size="15" value=28>28</option>
+		<option size="15" value=29>29</option>
+		<option size="15" value=30>30</option>
+		<option size="15" value=31>31</option>
+		</select>
+		<select name="Hour_start" id="Hour_start" onchange="" class="input">
+		<option size="15" value=0>00</option>				
+		<option size="15" value=1>01</option>
+		<option size="15" value=2>02</option>
+		<option size="15" value=3>03</option>
+		<option size="15" value=4>04</option>
+		<option size="15" value=5>05</option>
+		<option size="15" value=6>06</option>
+		<option size="15" value=7>07</option>
+		<option size="15" value=8>08</option>
+		<option size="15" value=9>09</option>
+		<option size="15" value=10>10</option>
+		<option size="15" value=11>11</option>
+		<option size="15" value=12>12</option>
+		<option size="15" value=13>13</option>
+		<option size="15" value=14>14</option>
+		<option size="15" value=15>15</option>
+		<option size="15" value=16>16</option>
+		<option size="15" value=17>17</option>
+		<option size="15" value=18>18</option>
+		<option size="15" value=19>19</option>
+		<option size="15" value=20>20</option>
+		<option size="15" value=21>21</option>
+		<option size="15" value=22>22</option>
+		<option size="15" value=23>23</option>
+		</select>
+		:
+		<select name="Minute_start" id="Minute_start" onchange="" class="input">
+		<option size="15" value=00>00</option>				
+		<option size="15" value=30>30</option>
+		</select>
+		</td>		
+		</tr>
+				<tr>
+		<td colspan=3><label>until</label>
+		<select name="Year_end" id="Year_end" onchange="" class="input">
+		<option size="15" value=2009>2009</option>
+		<option size="15" value=2008>2008</option>
+		<option size="15" value=2007>2007</option>
+		<option size="15" value=2006>2006</option>
+		<option size="15" value=2005>2005</option>
+		<option size="15" value=2004>2004</option>
+		<option size="15" value=2003>2003</option>
+		<option size="15" value=2002>2002</option>
+		<option size="15" value=2001>2001</option>
+		<option size="15" value=2000>2000</option>
+		</select>
+		<select name="Month_end" id="Month_end" onchange="" class="input">
+		<option size="15" value=0>January</option>
+		<option size="15" value=1>Febuary</option>
+		<option size="15" value=2>March</option>
+		<option size="15" value=3>April</option>
+		<option size="15" value=4>May</option>
+		<option size="15" value=5>June</option>
+		<option size="15" value=6>July</option>
+		<option size="15" value=7>August</option>
+		<option size="15" value=8>September</option>
+		<option size="15" value=9>October</option>
+		<option size="15" value=10>November</option>
+		<option size="15" value=11>December</option>
+		</select>
+		<select name="Day_end" id="Day_end" onchange="" class="input">
+		<option size="15" value=1>01</option>
+		<option size="15" value=2>02</option>
+		<option size="15" value=3>03</option>
+		<option size="15" value=4>04</option>
+		<option size="15" value=5>05</option>
+		<option size="15" value=6>06</option>
+		<option size="15" value=7>07</option>
+		<option size="15" value=8>08</option>
+		<option size="15" value=9>09</option>
+		<option size="15" value=10>10</option>
+		<option size="15" value=11>11</option>
+		<option size="15" value=12>12</option>
+		<option size="15" value=13>13</option>
+		<option size="15" value=14>14</option>
+		<option size="15" value=15>15</option>
+		<option size="15" value=16>16</option>
+		<option size="15" value=17>17</option>
+		<option size="15" value=18>18</option>
+		<option size="15" value=19>19</option>
+		<option size="15" value=20>20</option>
+		<option size="15" value=21>21</option>
+		<option size="15" value=22>22</option>
+		<option size="15" value=23>23</option>
+		<option size="15" value=24>24</option>
+		<option size="15" value=25>25</option>
+		<option size="15" value=26>26</option>
+		<option size="15" value=27>27</option>
+		<option size="15" value=28>28</option>
+		<option size="15" value=29>29</option>
+		<option size="15" value=30>30</option>
+		<option size="15" value=31>31</option>
+		</select>
+		<select name="Hour_end" id="Hour_end" onchange="" class="input">
+		<option size="15" value=0>00</option>				
+		<option size="15" value=1>01</option>
+		<option size="15" value=2>02</option>
+		<option size="15" value=3>03</option>
+		<option size="15" value=4>04</option>
+		<option size="15" value=5>05</option>
+		<option size="15" value=6>06</option>
+		<option size="15" value=7>07</option>
+		<option size="15" value=8>08</option>
+		<option size="15" value=9>09</option>
+		<option size="15" value=10>10</option>
+		<option size="15" value=11>11</option>
+		<option size="15" value=12>12</option>
+		<option size="15" value=13>13</option>
+		<option size="15" value=14>14</option>
+		<option size="15" value=15>15</option>
+		<option size="15" value=16>16</option>
+		<option size="15" value=17>17</option>
+		<option size="15" value=18>18</option>
+		<option size="15" value=19>19</option>
+		<option size="15" value=20>20</option>
+		<option size="15" value=21>21</option>
+		<option size="15" value=22>22</option>
+		<option size="15" value=23>23</option>
+		</select>
+		:
+		<select name="Minute_end" id="Minute_end" onchange="" class="input">
+		<option size="15" value=00>00</option>				
+		<option size="15" value=30>30</option>
+		</select>
+		</td>		
+		</tr>
+		<tr>
+		<td><input type="button" id="Reset" value="Reset" onclick="ReSet()" class="Button"></td>		
+		<td></td>
+		<td align="right"><input type="button" id="Download" value="Download" onclick="" class="Button"></td>
+		</tr>
+		</table>
+	</FORM>
+</div></td>
+<td class="borders"  style="width: 80%;"><div style="width:100%;height:500px;" id="map_canvas"></div></td>
+</tr>
+<tr class="borders">
+<td></td>
+<td><div style="width:100%; height:150px;" id="info_canvas"></div></td>
+</tr>
+</table>
+
+
+
+	</body>
+</html>
+
