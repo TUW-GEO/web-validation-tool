@@ -11,9 +11,9 @@ import pandas as pd
 from datetime import datetime
 import time
 
-from geo_python.RS.Validation.io.db_model import interface
+from validation_tool.iout.db_model import interface
 from geo_python.RS.dataspecific.ISMN.db_model import ISMN_interface
-import geo_python.general.time_series.temporal_matching as temp_match
+import pytesmo.temporal_matching as temp_match
 import geo_python.general.time_series.scaling as scale
 import geo_python.general.time_series.metrics as metrics
 import geo_python.general.time_series.anomaly as anomaly_calc
@@ -72,8 +72,9 @@ def get_data(station_id, scaling='linreg', mask={'snow_depth': 0.0, 'st_l1': 0.0
     ISMN_data = ISMN_station.get_soil_moisture_for_depth(
         relevant_depth, start_date=datetime(2007, 1, 1))
 
-    ISMN_ts_name = 'insitu sm %.2f - %.2f m sensor: ' % (float(relevant_depth.depth_from), float(relevant_depth.depth_to)) +\
-                   ISMN_data['sensor_name'].values[0]
+    sensor = ISMN_data.keys()[0]
+    ISMN_data = ISMN_data[sensor]
+    ISMN_ts_name = 'insitu sm %.2f - %.2f m sensor: ' % (float(relevant_depth.depth_from), float(relevant_depth.depth_to)) + sensor
 
     if anomaly != None:
 
@@ -114,7 +115,7 @@ def get_data(station_id, scaling='linreg', mask={'snow_depth': 0.0, 'st_l1': 0.0
         ascat_masked = ascat_masked.dropna()
         ISMN_data = ISMN_data.dropna()
 
-    matched_data = temp_match.match(ISMN_data, ascat_masked, 1)
+    matched_data = temp_match.matching(ISMN_data[['insitu']], ascat_masked[[ascat_label]], window=1)
 
     if scaling != 'noscale' and scaling != 'porosity':
 
@@ -145,8 +146,8 @@ def get_data(station_id, scaling='linreg', mask={'snow_depth': 0.0, 'st_l1': 0.0
     ascat_insitu = {'labels': labels, 'data': values}
 
     # slice to same period as insitu data
-    era_matched = era_matched[era_matched.index.get_loc(scaled_data.index[0]):
-                              era_matched.index.get_loc(scaled_data.index[scaled_data.index.values.size - 1])]
+    era_matched = era_matched[scaled_data.index[0]:
+                              scaled_data.index[scaled_data.index.values.size - 1]]
 
     era_matched.rename(columns={'st_l1': 'soil temperature layer 1',
                                 'air_temp': '2m air temperature'}, inplace=True)

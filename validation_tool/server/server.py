@@ -13,9 +13,9 @@ from numpy import ma
 from datetime import datetime
 import json
 
-import geo_python.RS.Validation.web.plots as rs_plots
-import geo_python.RS.Validation.web.data_request as rs_data
-import geo_python.general.grid.dgg.find as find_gp
+import validation_tool.server.plots as rs_plots
+import validation_tool.server.data_request as rs_data
+import geo_python.RS.processor.WARP.dgg.db_query as find_gp
 import geo_python.RS.dataspecific.ECMWF.grid as era_grid
 
 from matplotlib import _png
@@ -161,13 +161,18 @@ class LatLonHandler(tornado.web.RequestHandler):
         lat = float(self.get_argument('lat'))
         lon = float(self.get_argument('lon'))
 
-        era_gpi, era_dist, era_lat, era_lon, era_status = era_grid.find_nearest_gp(
-            lat, lon)
-        warp_gpi, warp_dist, warp_lat, warp_lon, warp_status = find_gp.find_nearest_gp(
+        era_interim_grid = era_grid.load_ERAgrid()
+        era_gpi, era_dist = era_interim_grid.find_nearest_gpi(lat, lon)
+        era_lat, era_lon  = era_interim_grid.gpi2lonlat(era_gpi)
+        warp_gpi, warp_dist, warp_lat, warp_lon, lenght, cell = find_gp.find_nearest_gp(
             lat, lon, "warp_grid", lm_name='ind_ld')
 
-        self.write({'warp': {'gpi': warp_gpi[0], 'distance': '%.1f m' % warp_dist[0], 'lat': warp_lat[0], 'lon': warp_lon[0]},
-                    'era': {'gpi': era_gpi, 'distance': '%.1f m' % era_dist, 'lat': era_lat, 'lon': era_lon}})
+        self.write({'warp': {'gpi': warp_gpi[0],
+                             'distance': '%.1f m' % warp_dist[0],
+                             'lat': warp_lat[0],
+                             'lon': warp_lon[0]},
+                    'era': {'gpi': int(era_gpi), 'distance': '%.1f m' % era_dist[0],
+                            'lat': float(era_lat), 'lon': float(era_lon)}})
         self.set_header("Access-Control-Allow-Origin", "*")
 
 application = tornado.web.Application([
