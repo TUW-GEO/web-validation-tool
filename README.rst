@@ -2,14 +2,14 @@
 validation_tool
 ===============
 
+To run locally change the host in
+``validation_tool/validation_tool/js/ValidationViewer_class.js`` to
+``http://localhost:8080`` and also change the port in
+``validation_tool/validation_tool/server/server.py`` to ``8080``. Then run
+``python server.py`` to start the Tornado Server.
 
-Add a short description here!
-
-
-Description
-===========
-
-A LONGER DESCRIPTION OF YOUR PROJECT GOES HERE...
+Run ``python -m SimpleHTTPServer 8888`` in the ``validation_tool`` folder to
+serve the static files. Then visit http://localhost:8888/ascat.html
 
 
 Note
