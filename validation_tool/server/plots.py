@@ -4,7 +4,7 @@ Created on Jun 12, 2013
 @author: Christoph Paulik christoph.paulik@geo.tuwien.ac.at
 '''
 
-from validation_tool.server.io.db_model import interface
+from validation_tool.iout.db_model import interface
 
 
 def plot_ascat_data(station_id):
