@@ -2,6 +2,17 @@
 validation_tool
 ===============
 
+Source code of the ASCAT validation Tool. This version depends on a connection
+to a postgresql database running on dbs1.ipf.tuwien.ac.at. The included json
+file in network_stations fits to the stations also in the database.
+
+It is planned that future versions will drop this dependency and work with data
+from WebServices or netCDF files directly on disk if it is not avoidable.
+
+
+Run locally
+===========
+
 To run locally change the host in
 ``validation_tool/validation_tool/js/ValidationViewer_class.js`` to
 ``http://localhost:8080`` and also change the port in
