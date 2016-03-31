@@ -9,9 +9,9 @@ pandas
 matplotlib
 scipy
 psycopg2
-tornado
 statsmodels
 cython
 netCDF4
 pytesmo
+flask
 
