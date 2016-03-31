@@ -41,21 +41,21 @@ function ValidationViewer(div){
 	this.anom_corr=0;
 	
 	
-	this.warpIcon=new google.maps.MarkerImage('./images/cross_marker.png',
+	this.warpIcon=new google.maps.MarkerImage('./static/images/cross_marker.png',
 			new google.maps.Size(25,25),
 			new google.maps.Point(0,0),
       		new google.maps.Point(12, 12)); 
 			
-	this.eraIcon=new google.maps.MarkerImage('./images/cross_marker_red.png',
+	this.eraIcon=new google.maps.MarkerImage('./static/images/cross_marker_red.png',
 			new google.maps.Size(25,25),
 			new google.maps.Point(0,0),
       		new google.maps.Point(12, 12)); 
 			
 			
-	this.host = 'http://python.ipf.tuwien.ac.at/validation_tool/';
-	this.port = '';
-	//this.host = 'http://cpa';
-	//this.port = '8888';
+	// this.host = 'http://python.ipf.tuwien.ac.at/validation_tool/';
+	// this.port = '';
+	this.host = 'http://localhost:5000';
+	this.port = '8080';
 }
 
 
