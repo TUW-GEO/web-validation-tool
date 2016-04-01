@@ -99,7 +99,8 @@ Station.prototype.generateInfoWindow= function(){
 			<table class="popup"><thead><tr><th> Data available </th><th> Variables measured </th></tr></thead>\
 			<tr><td>from: '+this.stationObject.minimum+'<br> to: '+this.stationObject.maximum+' </td><td>'+this.stationObject.variableText+'</td></tr>\
 			<thead><tr><th> Soil Moisture measured at </th><th> Soil moisture measured with </th></tr></thead>\
-			<tr><td>'+this.stationObject.depthText+'</td><td>'+this.stationObject.sensorText+'</td></tr></table>';
+			<tr><td>'+this.stationObject.depthText+'</td><td>'+this.stationObject.sensorText+'</td></tr></table>\
+      <br><a href="#", id="viewData" class="Button">View Data</a>';
 	
 
 	this.htmlInfo = html;	

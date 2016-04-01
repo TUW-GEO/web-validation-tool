@@ -2,6 +2,7 @@
 import validation_tool.server.data_request as rs_data
 import geo_python.RS.processor.WARP.dgg.db_query as find_gp
 import geo_python.RS.dataspecific.ECMWF.grid as era_grid
+import pandas as pd
 
 import cStringIO
 import os
@@ -16,6 +17,8 @@ from flask import render_template
 png_buffer = cStringIO.StringIO()
 
 from validation_tool.server.ismn import ismn_metadata
+from validation_tool.server.ismn import variable_list
+from validation_tool.server.ismn import get_station_data
 
 
 @app.route('/')
@@ -136,5 +139,60 @@ def get_station_details():
         data = jsonify(json.load(fid))
 
     resp = make_response(data)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
+@app.route('/dataviewer_get_variable_list')
+def get_variable_list():
+    """
+    Get variable list for a station id.
+    """
+    stationname = request.args.get('station_id')
+    data = variable_list(app.config['ISMN_PATH'], stationname)
+    data = jsonify(data)
+    resp = make_response(data)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
+@app.route('/dataviewer_load_possible_timestamps')
+def get_possible_timestamps():
+    """
+    Get possible timestamps for a station id.
+
+    This defaults to returning hourly timestamps at the moment.
+    """
+    stationname = request.args.get('station_id')
+    start = request.args.get('start')
+    end = request.args.get('end')
+
+    dr = pd.date_range(start, end, freq='H').to_pydatetime()
+    l = map(lambda x: x.isoformat(), dr)
+
+    resp = make_response(jsonify(dates=l))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
+@app.route('/dataviewer_load_variable')
+def get_ismn_variable():
+    """
+    Get data for ismn variable.
+    """
+    stationname = request.args.get('station_id')
+    start = request.args.get('start')
+    end = request.args.get('end')
+    depth_from = request.args.get('depth_from')
+    depth_to = request.args.get('depth_to')
+    sensor_id = request.args.get('sensor_id')
+    variable = request.args.get('variable')
+    ts = get_station_data(app.config['ISMN_PATH'],
+                          stationname,
+                          variable,
+                          depth_from, depth_to, sensor_id)
+
+    resp = make_response(ts.to_json(orient='split',
+                                    date_format='iso'))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp

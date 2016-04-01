@@ -66,8 +66,12 @@ ISMNMarker.prototype.setInfoWindow=function(html,parent){
 						parent.openDataComparison();
 					});
 				}
+        if($("#viewData").length!=0){
+            $("#viewData").click(function() {
+                parent.openDataViewer();
+            });
+        }
 			}
-	
 		});
 		
 		

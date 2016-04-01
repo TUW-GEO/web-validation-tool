@@ -102,3 +102,70 @@ def get_depth_text(depths_from, depths_to):
         l.append("{:.2f} - {:.2f} m".format(depth_from, depth_to))
 
     return '<br>'.join(l)
+
+
+def variable_list(path, stationname):
+    """
+    Goes through a downloaded ISMN dataset and reads the necessary metadata
+    needed for the viewer.
+
+    Parameters
+    ----------
+    path: string
+        Folder in which the ISMN data is stored
+    stationname: string
+        Name of the station
+
+    Returns
+    -------
+    metadata: dict
+       Metadata dictionary.
+    """
+    variables = []
+    iface = ISMN_Interface(path)
+    station = iface.get_station(stationname)
+
+    for i, var in enumerate(station.variables):
+        name = "{}_{:.2f}_{}".format(var,
+                                     station.depth_from[i],
+                                     station.sensors[i])
+        var_dict = {"quantityName": var,
+                    "unit": "",
+                    "depthFrom": station.depth_from[i],
+                    "depthTo": station.depth_to[i],
+                    "sensorId": station.sensors[i],
+                    "variableName": name
+                    }
+        variables.append(var_dict)
+
+    dmin, dmax = station.get_min_max_obs_timestamp()
+    vl = {"maxtime": dmax.date().isoformat(),
+          "mintime": dmin.date().isoformat(),
+          "originalTimeframeValid": False,
+          "variables": variables}
+    return vl
+
+
+def get_station_data(path, stationname, variable,
+                     depth_from, depth_to, sensor_id):
+    """
+    Goes through a downloaded ISMN dataset and reads the necessary metadata
+    needed for the viewer.
+
+    Parameters
+    ----------
+    path: string
+        Folder in which the ISMN data is stored
+    stationname: string
+        Name of the station
+
+    Returns
+    -------
+    metadata: dict
+       Metadata dictionary.
+    """
+    iface = ISMN_Interface(path)
+    station = iface.get_station(stationname)
+    ds = station.read_variable(variable, float(depth_from),
+                               float(depth_to), sensor_id)
+    return ds.data[variable]
