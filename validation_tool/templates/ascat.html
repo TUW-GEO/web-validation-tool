@@ -171,11 +171,11 @@
           });
 		  
 	  //load network and station information from json file on harddisk
-	  $.getJSON("{{ url_for('static', filename='network_stations/network_station_details.json') }}",function(data){ 
+	  $.getJSON("{{ url_for('get_station_details') }}",function(data){ 
 		var networks=data.Networks;
 		Master=new Wrapper(map,info_map,true,false,true,1);
 		
-		Master.addNetworksJson(networks,"UMBRIA");
+		Master.addNetworksJson(networks);
 		Master.addNetworksJson(networks,"SNOTEL");
 		Master.addNetworksJson(networks,"SMOSMANIA");
 		Master.addNetworksJson(networks,"SCAN");

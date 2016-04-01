@@ -4,6 +4,8 @@ import geo_python.RS.processor.WARP.dgg.db_query as find_gp
 import geo_python.RS.dataspecific.ECMWF.grid as era_grid
 
 import cStringIO
+import os
+import json
 
 from validation_tool import app
 from flask import request
@@ -12,6 +14,8 @@ from flask import make_response
 from flask import render_template
 
 png_buffer = cStringIO.StringIO()
+
+from validation_tool.server.ismn import ismn_metadata
 
 
 @app.route('/')
@@ -109,6 +113,27 @@ def getdata():
         data = 'Error'
     else:
         data = jsonify(data)
+
+    resp = make_response(data)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
+@app.route('/get_station_details')
+def get_station_details():
+    """Get the station details of the used ISMN data.
+
+    If no metadata information exists then it will be generated the first time
+    and the json file will be stored in the ismn data path.
+    """
+    json_path = os.path.join(app.config['ISMN_PATH'], 'ismn_metadata.json')
+    if not os.path.exists(json_path):
+        data = ismn_metadata(app.config['ISMN_PATH'])
+        with open(json_path, 'w') as fid:
+            json.dump(data, fid)
+
+    with open(json_path, 'r') as fid:
+        data = jsonify(json.load(fid))
 
     resp = make_response(data)
     resp.headers['Access-Control-Allow-Origin'] = '*'
