@@ -7,5 +7,6 @@ except:
 
 from flask import Flask
 app = Flask(__name__)
+app.config.from_object('validation_tool.default_settings')
 
 import validation_tool.views
