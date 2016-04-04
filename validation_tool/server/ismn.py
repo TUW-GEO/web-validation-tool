@@ -149,8 +149,7 @@ def variable_list(path, stationname):
 def get_station_data(path, stationname, variable,
                      depth_from, depth_to, sensor_id):
     """
-    Goes through a downloaded ISMN dataset and reads the necessary metadata
-    needed for the viewer.
+    Read the data from the ISMN dataset
 
     Parameters
     ----------
@@ -158,11 +157,19 @@ def get_station_data(path, stationname, variable,
         Folder in which the ISMN data is stored
     stationname: string
         Name of the station
+    variable: string
+        Name of the variable to read
+    depth_from: string
+        starting depth of the variable
+    depth_to: string
+        end depth of the variable
+    sensor_id: string
+        Sensor id of the sensor to read
 
     Returns
     -------
-    metadata: dict
-       Metadata dictionary.
+    ds: pandas.DataFrame
+        Data
     """
     iface = ISMN_Interface(path)
     station = iface.get_station(stationname)
