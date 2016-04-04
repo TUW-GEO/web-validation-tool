@@ -4,7 +4,7 @@
 function ValidationViewer(div){
 	
 	this.div="dv_"+div;
-	this.compareWith='ASCAT';
+	this.compareWith='CCI';
 
 	this.graphDiv=this.div+"_graph";
 	this.labelsDiv=this.div+"_labels";
@@ -242,7 +242,7 @@ ValidationViewer.prototype.buildViewer=function(){
 		$('#validation_window').append('<div class="step_frame"><h5>Masking using ERA-Interim data and Surface State Flag(SSF)</h5><div class="graph_frame"><div id="era_data" style="height: 200px; width: '+_self.graph_width+'px;">\
 										</div><div id="era_data_labels" style="width: '+_self.graph_width+'px; height: 60px;"></div></div><div id="masking_form" class="forms"></div></div>');
 										
-		$('#validation_window').append('<div class="step_frame"><h5>Scale ASCAT data to insitu and select anomaly</h5><div id="tabs">\
+		$('#validation_window').append('<div class="step_frame"><h5>Scale CCI SM data to insitu and select anomaly</h5><div id="tabs">\
 											<ul>\
 												<li><a id="absolute" href="#tabs-1">Absolute values</a></li>\
 												<li><a id="anomalies_clim" href="#tabs-2" title="Anomalies calculated by subtracting\
@@ -459,7 +459,7 @@ ValidationViewer.prototype.loadData=function(scaling,snow_depth,st_l1,air_temp,s
 	
 			this.graph=new Dygraph(document.getElementById(data_div),data.validation_data.data,{		
 			labels:data.validation_data.labels,labelsDiv:label_div,labelsSeparateLines: true,connectSeparatedPoints:true,legend:'always',
-			'ASCAT_SSM':{
+			'CCI_SSM':{
 				axis:{}
 			},
 			axes:{
@@ -470,7 +470,7 @@ ValidationViewer.prototype.loadData=function(scaling,snow_depth,st_l1,air_temp,s
 			},
 			drawPoints:true,
 			ylabel:'soil moisture [m&sup3;/m&sup3;]',
-			y2label:'ASCAT SSM [%]',
+			y2label:'CCI SSM [%]',
 			//title:'soil moisture data',
 			colors:['#409300','#5791B4'],
 			zoomCallback:function(minDate,maxDate,yRanges){
@@ -694,7 +694,7 @@ ValidationViewer.prototype.drawScatter=function(div){
 			  .attr("y", 6)
 			  .attr("dy", ".7em")
 			  .style("text-anchor", "end")
-			  .text("ASCAT SSM")
+			  .text("CCI SSM")
 
 		  svg.selectAll(".dot")
 			  .data(_self.data.validation_data.data)

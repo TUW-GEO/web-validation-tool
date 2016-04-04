@@ -30,7 +30,8 @@ def validation_tool():
         activate_validation = False
     else:
         activate_validation = True
-    return render_template('ascat.html', validation=activate_validation)
+    return render_template('index.html', validation=activate_validation,
+                           dataset_name="CCI SM")
 
 
 @app.route('/getoptions')
