@@ -103,9 +103,10 @@ Station.prototype.generateInfoWindow= function(){
       <br><a href="#", id="viewData" class="Button">View Data</a>';
 	
 
-	this.htmlInfo = html;	
 			
-	if(this.validationButton&&this.hasRecordsInDateRange(new Date(2007,01,01).getTime(),new Date(2012,11,31).getTime()))html+='<a href="#" id="compareData" class="Button">Compare to ASCAT</a>';		
+	  if(this.validationButton&&this.hasRecordsInDateRange(new Date(2007,01,01).getTime(),new Date(2012,11,31).getTime())){
+        html+='<a href="#" id="compareData" class="Button">Compare to ASCAT</a>';
+    }
 	
 	html+='</div>';
 	
@@ -115,6 +116,7 @@ Station.prototype.generateInfoWindow= function(){
 		<br>No Data available</div>';
 	}
 	
+	this.htmlInfo = html;	
 	this.marker.setInfoWindow(html,this);
 
 }

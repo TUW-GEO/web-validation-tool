@@ -64,7 +64,9 @@ Network.prototype.init= function(){
 	this.generateStations();
 	this.addListeners();
 	this.showCorrectMarkers();
-	if(this.infoWindowEnabled)this.generateInfoWindow();
+	if(this.infoWindowEnabled){
+      this.generateInfoWindow ();}
+  this.hideNetworkMarker();
 
 }
 
@@ -79,7 +81,7 @@ Network.prototype.generateStations = function(){
 		this.stations.push(station);
 	}	
 	
-	//this.networkMarker=new ISMNMarker(this.map,this.stations[0].getLocation(),this.color,this.networkMarkerVisible,this.name);	
+	this.networkMarker=new ISMNMarker(this.map,this.stations[0].getLocation(),this.color,this.networkMarkerVisible,this.name);	
 
 }
 /** populate info window with content

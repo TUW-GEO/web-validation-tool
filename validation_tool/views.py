@@ -23,7 +23,11 @@ from validation_tool.server.ismn import get_station_data
 
 @app.route('/')
 def validation_tool():
-    return render_template('ascat.html')
+    if len(app.config['VALIDATION_DS']) == 0:
+        activate_validation = False
+    else:
+        activate_validation = True
+    return render_template('ascat.html', validation=activate_validation)
 
 
 @app.route('/getoptions')
