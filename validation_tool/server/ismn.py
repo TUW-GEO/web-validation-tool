@@ -31,6 +31,7 @@ Module generates dict representation of ISMN Metadata.
 '''
 
 from pytesmo.io.ismn.interface import ISMN_Interface
+import numpy as np
 
 
 def ismn_metadata(path):
@@ -176,3 +177,51 @@ def get_station_data(path, stationname, variable,
     ds = station.read_variable(variable, float(depth_from),
                                float(depth_to), sensor_id)
     return ds.data[variable]
+
+
+def get_station_lonlat(path, stationname):
+    """
+    Get the latitude and longitude coordinates from a station.
+
+    Parameters
+    ----------
+    path: string
+        Folder in which the ISMN data is stored
+    stationname: string
+        Name of the station
+
+    Returns
+    -------
+    lon: float
+    lat: float
+    """
+    iface = ISMN_Interface(path)
+    station = iface.get_station(stationname)
+    return station.longitude, station.latitude
+
+
+def get_station_first_sm_layer(path, stationname):
+    """
+    Get the metadata of the first soil moisture layer of this variable.
+
+    Parameters
+    ----------
+    path: string
+        Folder in which the ISMN data is stored
+    stationname: string
+        Name of the station
+
+    Returns
+    -------
+    depth_from: float
+    depth_to: float
+    sensor: string
+    """
+    iface = ISMN_Interface(path)
+    station = iface.get_station(stationname)
+    depths_from, depths_to = station.get_depths("soil moisture")
+    s_idx = np.argsort(depths_from)
+    depth_from = depths_from[s_idx[0]]
+    depth_to = depths_to[s_idx[0]]
+    sensor = station.get_sensors("soil moisture", depth_from, depth_to)
+    return depth_from, depth_to, sensor[0]
