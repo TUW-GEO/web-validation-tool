@@ -76,6 +76,9 @@ def ismn_metadata(path):
         for stationname in stations:
             station = iface.get_station(stationname, network=networkname)
             dmin, dmax = station.get_min_max_obs_timestamp()
+            if dmin is None or dmax is None:
+                # No soil moisture measured at this station
+                continue
             station_dict = {
                 "station_abbr": stationname,
                 "lat": station.latitude,
