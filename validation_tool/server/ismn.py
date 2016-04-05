@@ -174,8 +174,10 @@ def get_station_data(path, stationname, variable,
     """
     iface = ISMN_Interface(path)
     station = iface.get_station(stationname)
-    ds = station.read_variable(variable, float(depth_from),
-                               float(depth_to), sensor_id)
+    ds = station.read_variable(variable.encode('ascii'),
+                               float(depth_from),
+                               float(depth_to),
+                               sensor_id.encode('ascii'))
     return ds.data[variable]
 
 
