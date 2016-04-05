@@ -94,10 +94,10 @@ ISMNDataViewer.prototype.openViewer=function(station){
 
 
   this.dialog=$( "#"+this.div ).dialog({
-      autoOpen: false,
+    autoOpen: false,
     height: 'auto',
-      modal: false,
-    closeText:'x',
+    modal: false,
+    closeText:'',
     width: 800,
     buttons: {
         "Refresh": function() {
@@ -114,7 +114,7 @@ ISMNDataViewer.prototype.openViewer=function(station){
   var body='<div id="'+this.loadingDiv+'" class="dv_loading"></div><div id="'+this.labelsDiv+'" style="width: 740px; height: 60px;"></div><div id="'+this.dygraphDiv+'" style="width:740px;height:345px;"></div>\
   <div class="dv_information">Drag an area to zoom in. Double click to zoom to whole date range. <br> Enter a number in the box to calculate a rolling average over the number of observations\
   (the data interval is hourly for most variables).</div><div id="'+this.selectorDiv+'" class="dv_information"></div>\
-  <div id="'+this.informationDiv+'" class="dv_information">To see more data change the time interval on the left an press refresh.<br></div>'
+  <div id="'+this.informationDiv+'" class="dv_information"></div>';
 
   $('#'+this.div).html(body);
 

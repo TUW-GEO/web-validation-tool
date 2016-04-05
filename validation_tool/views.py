@@ -19,11 +19,19 @@ png_buffer = cStringIO.StringIO()
 from validation_tool.server.ismn import ismn_metadata
 from validation_tool.server.ismn import variable_list
 from validation_tool.server.ismn import get_station_data
+from validation_tool.server.ismn import get_station_lonlat
+from validation_tool.server.ismn import get_station_first_sm_layer
+from validation_tool.server.data_request import get_validation_data
 
 
 @app.route('/')
 def validation_tool():
-    return render_template('ascat.html')
+    if len(app.config['VALIDATION_DS']) == 0:
+        activate_validation = False
+    else:
+        activate_validation = True
+    return render_template('index.html', validation=activate_validation,
+                           dataset_name="CCI SM")
 
 
 @app.route('/getoptions')
@@ -80,7 +88,7 @@ def getlatlon():
 @app.route('/getdata')
 def getdata():
     """
-    handles the get request, which should containt the arguments listes under
+    handles the get request, which should contain the arguments listes under
     parameters
 
     Parameters
@@ -98,7 +106,7 @@ def getdata():
     ssf_masking: boolean
         use SSF for masking true or false    
     """
-    station_id = int(request.args.get('station_id'))
+    station_id = request.args.get('station_id')
     scaling = request.args.get('scaling')
     snow_depth = request.args.get('snow_depth')
     st_l1 = request.args.get('st_l1')
@@ -110,8 +118,23 @@ def getdata():
     if anomaly == 'none':
         anomaly = None
 
-    data, status = rs_data.get_data(station_id, scaling,
-                                    mask={'snow_depth': float(snow_depth), 'st_l1': float(st_l1), 'air_temp': float(air_temp), 'use_ssf': ssf_dict[ssf_masking]}, anomaly=anomaly)
+    (depth_from,
+     depth_to,
+     sensor_id) = get_station_first_sm_layer(app.config['ISMN_PATH'],
+                                             station_id)
+
+    ismn_ts = get_station_data(app.config['ISMN_PATH'],
+                               station_id,
+                               "soil moisture",
+                               depth_from, depth_to, sensor_id)
+
+    lon, lat = get_station_lonlat(app.config['ISMN_PATH'],
+                                  station_id)
+    validation_data = get_validation_data(lon, lat)
+
+    data, status = rs_data.compare_data(ismn_ts, validation_data,
+                                        scaling,
+                                        anomaly=anomaly)
     if status == -1:
         data = 'Error'
     else:

@@ -99,13 +99,16 @@ Station.prototype.generateInfoWindow= function(){
 			<table class="popup"><thead><tr><th> Data available </th><th> Variables measured </th></tr></thead>\
 			<tr><td>from: '+this.stationObject.minimum+'<br> to: '+this.stationObject.maximum+' </td><td>'+this.stationObject.variableText+'</td></tr>\
 			<thead><tr><th> Soil Moisture measured at </th><th> Soil moisture measured with </th></tr></thead>\
-			<tr><td>'+this.stationObject.depthText+'</td><td>'+this.stationObject.sensorText+'</td></tr></table>\
-      <br><a href="#", id="viewData" class="Button">View Data</a>';
-	
-
+			<tr><td>'+this.stationObject.depthText+'</td><td>'+this.stationObject.sensorText+'</td></tr></table>';
+  // set htmlinfo without buttons to be reused later
 	this.htmlInfo = html;	
+
+    html += '<br><a href="#", id="viewData" class="Button">View Data</a>';
+
 			
-	if(this.validationButton&&this.hasRecordsInDateRange(new Date(2007,01,01).getTime(),new Date(2012,11,31).getTime()))html+='<a href="#" id="compareData" class="Button">Compare to ASCAT</a>';		
+	  if(this.validationButton&&this.hasRecordsInDateRange(new Date(2007,01,01).getTime(),new Date(2012,11,31).getTime())){
+        html+='<a href="#" id="compareData" class="Button">Compare to CCI</a>';
+    }
 	
 	html+='</div>';
 	

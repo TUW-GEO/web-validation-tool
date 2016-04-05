@@ -18,6 +18,8 @@ import geo_python.general.time_series.scaling as scale
 import geo_python.general.time_series.metrics as metrics
 import geo_python.general.time_series.anomaly as anomaly_calc
 
+from validation_tool import app
+
 
 def to_dygraph_format(self):
     labels = ['date']
@@ -33,19 +35,7 @@ def to_dygraph_format(self):
 pd.DataFrame.to_dygraph_format = to_dygraph_format
 
 
-def get_data(station_id, scaling='linreg', mask={'snow_depth': 0.0, 'st_l1': 0.0, 'air_temp': 0.0, 'use_ssf': True},
-             anomaly=None):
-
-    ascat_label = 'ASCAT_SSM'
-
-    vt_db = interface()
-    vt_db.connect()
-
-    ascat_data = vt_db.get_ascat_data_for_station_id(station_id)
-
-    ascat_data.rename(columns={'sm': ascat_label}, inplace=True)
-
-    era_interim_data = vt_db.get_era_interim_data_for_station_id(station_id)
+def mask_data():
 
     era_matched = temp_match.df_match(ascat_data, era_interim_data, window=1)
 
@@ -58,8 +48,6 @@ def get_data(station_id, scaling='linreg', mask={'snow_depth': 0.0, 'st_l1': 0.0
 
     ascat_masked = ascat_masked[[ascat_label, 'jd']]
 
-    ISMN = ISMN_interface()
-    ISMN.connect()
     relevant_depth = None
     ISMN_station = ISMN.get_station_by_id(station_id)
     for depth in ISMN_station.sm_depths:
@@ -74,28 +62,65 @@ def get_data(station_id, scaling='linreg', mask={'snow_depth': 0.0, 'st_l1': 0.0
 
     sensor = ISMN_data.keys()[0]
     ISMN_data = ISMN_data[sensor]
-    ISMN_ts_name = 'insitu sm %.2f - %.2f m sensor: ' % (float(relevant_depth.depth_from), float(relevant_depth.depth_to)) + sensor
+    ISMN_ts_name = 'insitu sm %.2f - %.2f m sensor: ' % (
+        float(relevant_depth.depth_from), float(relevant_depth.depth_to)) + sensor
+
+    era_insitu_matched = temp_match.df_match(
+        ISMN_data, era_interim_data, window=1)
+
+    insitu_masked = ISMN_data[(era_insitu_matched['snow_depth'] <= mask['snow_depth'])
+                              & (era_insitu_matched['st_l1'] > mask['st_l1'])
+                              & (era_insitu_matched['air_temp'] > mask['air_temp'])]
+
+    if mask['use_ssf'] == True:
+        ascat_insitu_matched = temp_match.df_match(
+            insitu_masked, ascat_data, window=1)
+        insitu_masked = insitu_masked[ascat_insitu_matched['ssf'] == 1]
+
+    ISMN_data = insitu_masked[['insitu', 'jd']]
+
+    # slice to same period as insitu data
+    era_matched = era_matched[scaled_data.index[0]:
+                              scaled_data.index[scaled_data.index.values.size - 1]]
+
+    era_matched.rename(columns={'st_l1': 'soil temperature layer 1',
+                                'air_temp': '2m air temperature'}, inplace=True)
+
+    era_matched = era_matched[
+        ['snow_depth', 'soil temperature layer 1', '2m air temperature']]
+
+    era_labels, era_values = era_matched.to_dygraph_format()
+
+    era_data = {'labels': era_labels, 'data': era_values}
+
+
+def compare_data(ismn_data, validation_data,
+                 scaling='linreg',
+                 anomaly=None):
+    """
+    Compare data from an ISMN station to the defined validation datasets.
+
+    Parameters
+    ----------
+    ismn_data: pandas.Dataframe
+        Data from the ISMN used as a reference
+    validation_data: dict
+        Dictionary of pandas.DataFrames, One for each dataset to
+        compare against
+    scaling: string, optional
+        Scaling method to use.
+    anomaly: string
+        If set then the validation is done for anomalies.
+    """
+    insitu_label = 'soil moisture'
 
     if anomaly != None:
-
-        era_insitu_matched = temp_match.df_match(
-            ISMN_data, era_interim_data, window=1)
-
-        insitu_masked = ISMN_data[(era_insitu_matched['snow_depth'] <= mask['snow_depth'])
-                                  & (era_insitu_matched['st_l1'] > mask['st_l1'])
-                                  & (era_insitu_matched['air_temp'] > mask['air_temp'])]
-
-        if mask['use_ssf'] == True:
-            ascat_insitu_matched = temp_match.df_match(
-                insitu_masked, ascat_data, window=1)
-            insitu_masked = insitu_masked[ascat_insitu_matched['ssf'] == 1]
-
-        ISMN_data = insitu_masked[['insitu', 'jd']]
 
         if anomaly == 'climatology':
             ascat_clim = anomaly_calc.calc_climatology(
                 ascat_masked[ascat_label])
-            insitu_clim = anomaly_calc.calc_climatology(ISMN_data['insitu'])
+            insitu_clim = anomaly_calc.calc_climatology(
+                ismn_data['soil moisture'])
 
             ascat_anom = anomaly_calc.calc_anomaly(
                 ascat_masked[ascat_label], climatology=ascat_clim)
@@ -115,51 +140,34 @@ def get_data(station_id, scaling='linreg', mask={'snow_depth': 0.0, 'st_l1': 0.0
         ascat_masked = ascat_masked.dropna()
         ISMN_data = ISMN_data.dropna()
 
-    matched_data = temp_match.matching(ISMN_data[['insitu']], ascat_masked[[ascat_label]], window=1)
+    for dname in validation_data:
+        vdata = validation_data[dname]
+        vdata_label = 'cci_sm'
+        vdata = vdata[vdata_label]
 
-    if scaling != 'noscale' and scaling != 'porosity':
+        matched_data = temp_match.matching(
+            ismn_data, vdata, window=1)
 
-        scaled_data = scale.add_scaled(
-            matched_data, label_in=ascat_label, label_scale='insitu', method=scaling)
+        if scaling != 'noscale' and scaling != 'porosity':
 
-        scaled_label = ascat_label + '_scaled_' + scaling
+            scaled_data = scale.add_scaled(
+                matched_data, label_in=vdata_label, label_scale=insitu_label, method=scaling)
 
-        scaled_data = scaled_data[['insitu', scaled_label]]
+            scaled_label = vdata_label + '_scaled_' + scaling
 
-    elif scaling == 'noscale':
-        scaled_data = matched_data[['insitu', ascat_label]]
-        scaled_label = ascat_label
-    elif scaling == 'porosity':
-        loc = vt_db.get_location_for_station_id(station_id)
-        porosity_top = loc.gpi_details.porosity_top
-        scaled_label = ascat_label + '/porosity'
-        matched_data[scaled_label] = (
-            matched_data[ascat_label] / 100.0) * (porosity_top / 100.0)
-        scaled_data = matched_data[['insitu', scaled_label]]
+            scaled_data = scaled_data[[insitu_label, scaled_label]]
 
-    vt_db.disconnect()
+        elif scaling == 'noscale':
+            scaled_data = matched_data[[insitu_label, vdata_label]]
+            scaled_label = vdata_label
 
-    scaled_data.rename(columns={'insitu': ISMN_ts_name}, inplace=True)
+    # scaled_data.rename(columns={'insitu': ISMN_ts_name}, inplace=True)
 
     labels, values = scaled_data.to_dygraph_format()
 
     ascat_insitu = {'labels': labels, 'data': values}
 
-    # slice to same period as insitu data
-    era_matched = era_matched[scaled_data.index[0]:
-                              scaled_data.index[scaled_data.index.values.size - 1]]
-
-    era_matched.rename(columns={'st_l1': 'soil temperature layer 1',
-                                'air_temp': '2m air temperature'}, inplace=True)
-
-    era_matched = era_matched[
-        ['snow_depth', 'soil temperature layer 1', '2m air temperature']]
-
-    era_labels, era_values = era_matched.to_dygraph_format()
-
-    era_data = {'labels': era_labels, 'data': era_values}
-
-    x, y = scaled_data[ISMN_ts_name].values, scaled_data[scaled_label].values
+    x, y = scaled_data[insitu_label].values, scaled_data[scaled_label].values
 
     kendall, p_kendall = sc_stats.kendalltau(x.tolist(), y.tolist())
     spearman, p_spearman = sc_stats.spearmanr(x, y)
@@ -184,11 +192,30 @@ def get_data(station_id, scaling='linreg', mask={'snow_depth': 0.0, 'st_l1': 0.0
                        'cdf_match': 'CDF matching'}
 
     settings = {'scaling': scaling_options[scaling],
-                'snow_depth': mask['snow_depth'],
-                'surface_temp': mask['st_l1'],
-                'air_temp': mask['air_temp']}
+                # 'snow_depth': mask['snow_depth'],
+                # 'surface_temp': mask['st_l1'],
+                # 'air_temp': mask['air_temp']
+                }
 
-    output_data = {'ascat_insitu': ascat_insitu, 'era_interim': era_data,
+    era_data = {'labels': [], 'data': []}
+    output_data = {'validation_data': ascat_insitu, 'masking_data': era_data,
                    'statistics': statistics, 'settings': settings}
 
     return output_data, 1
+
+
+def get_validation_data(lon, lat):
+    """
+    Read data from the validation datasets
+    based on latitude and longitude.
+    """
+
+    datasets = {}
+    for ds in app.config['VALIDATION_DS']:
+        name = ds['name']
+        cls = app.config['VALIDATION_LOOKUP'][ds['type']]
+        dataset = cls(name, ds['fid'], ds['variables'])
+        data = dataset.read(lon, lat)
+        datasets[name] = data
+
+    return datasets

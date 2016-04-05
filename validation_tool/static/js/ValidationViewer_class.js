@@ -4,7 +4,7 @@
 function ValidationViewer(div){
 	
 	this.div="dv_"+div;
-	this.compareWith='ASCAT';
+	this.compareWith='CCI';
 
 	this.graphDiv=this.div+"_graph";
 	this.labelsDiv=this.div+"_labels";
@@ -14,9 +14,9 @@ function ValidationViewer(div){
 	
 	this.selectedStation=-1;
 
-    this.active=false;
+  this.active=false;
 	
-    this.graph=null;
+  this.graph=null;
 	this.clim_graph=null;
 	this.avg_graph=null;
 	this.era_graph=null;
@@ -94,7 +94,7 @@ ValidationViewer.prototype.openViewer=function(station){
 	
 	this.window_width=$(window).width();
 	this.toolbox_width=(1024<this.window_width-200)?this.window_width-200:1024;
-	this.graph_width=this.toolbox_width-509;
+	this.graph_width=this.toolbox_width-519;
 	
 	$('#toolbox_container').css('left','-'+this.toolbox_width+'px');
 	$('#toolbox_container').css('width',this.toolbox_width+'px');
@@ -242,7 +242,7 @@ ValidationViewer.prototype.buildViewer=function(){
 		$('#validation_window').append('<div class="step_frame"><h5>Masking using ERA-Interim data and Surface State Flag(SSF)</h5><div class="graph_frame"><div id="era_data" style="height: 200px; width: '+_self.graph_width+'px;">\
 										</div><div id="era_data_labels" style="width: '+_self.graph_width+'px; height: 60px;"></div></div><div id="masking_form" class="forms"></div></div>');
 										
-		$('#validation_window').append('<div class="step_frame"><h5>Scale ASCAT data to insitu and select anomaly</h5><div id="tabs">\
+		$('#validation_window').append('<div class="step_frame"><h5>Scale CCI SM data to insitu and select anomaly</h5><div id="tabs">\
 											<ul>\
 												<li><a id="absolute" href="#tabs-1">Absolute values</a></li>\
 												<li><a id="anomalies_clim" href="#tabs-2" title="Anomalies calculated by subtracting\
@@ -411,24 +411,25 @@ ValidationViewer.prototype.loadData=function(scaling,snow_depth,st_l1,air_temp,s
 	
 	}
 	
-	$.getJSON(this.host+'/getdata',{station_id:this.selectedStation.id,scaling:scaling,snow_depth:snow_depth,st_l1:st_l1,air_temp:air_temp,ssf_masking:ssf_masking,anomaly:anomaly},function(data){
+	  $.getJSON(this.host+'/getdata',{station_id:this.selectedStation.id,
+                                    scaling:scaling,snow_depth:snow_depth,st_l1:st_l1,air_temp:air_temp,ssf_masking:ssf_masking,anomaly:anomaly},function(data){
 		if(!add_only){
 			_self.counter = _self.counter +1;
 		}	
 		_self.data = data;
 		
-		for(var i=0;i<data.ascat_insitu.data.length;i++) { 
-			data.ascat_insitu.data[i][0] = new Date(data.ascat_insitu.data[i][0]); 
+		for(var i=0;i<data.validation_data.data.length;i++) { 
+			data.validation_data.data[i][0] = new Date(data.validation_data.data[i][0]); 
 			} 
-		for(var i=0;i<data.era_interim.data.length;i++) { 
-			data.era_interim.data[i][0] = new Date(data.era_interim.data[i][0]);
+		for(var i=0;i<data.masking_data.data.length;i++) { 
+			data.masking_data.data[i][0] = new Date(data.masking_data.data[i][0]);
 			} 
 		
 		
 		var self = this;
 					  
-		_self.era_graph=new Dygraph(document.getElementById('era_data'),data.era_interim.data,{		
-		labels:data.era_interim.labels,labelsDiv:'era_data_labels',labelsSeparateLines: true,connectSeparatedPoints:true,legend:'always',
+		_self.era_graph=new Dygraph(document.getElementById('era_data'),data.masking_data.data,{		
+		labels:data.masking_data.labels,labelsDiv:'era_data_labels',labelsSeparateLines: true,connectSeparatedPoints:true,legend:'always',
 		'snow_depth':{
 			axis:{}
 		},
@@ -456,9 +457,9 @@ ValidationViewer.prototype.loadData=function(scaling,snow_depth,st_l1,air_temp,s
 	
 			$('#'+data_div).css('width',''+_self.graph_width+'px');
 	
-			this.graph=new Dygraph(document.getElementById(data_div),data.ascat_insitu.data,{		
-			labels:data.ascat_insitu.labels,labelsDiv:label_div,labelsSeparateLines: true,connectSeparatedPoints:true,legend:'always',
-			'ASCAT_SSM':{
+			this.graph=new Dygraph(document.getElementById(data_div),data.validation_data.data,{		
+			labels:data.validation_data.labels,labelsDiv:label_div,labelsSeparateLines: true,connectSeparatedPoints:true,legend:'always',
+			'CCI_SSM':{
 				axis:{}
 			},
 			axes:{
@@ -469,7 +470,7 @@ ValidationViewer.prototype.loadData=function(scaling,snow_depth,st_l1,air_temp,s
 			},
 			drawPoints:true,
 			ylabel:'soil moisture [m&sup3;/m&sup3;]',
-			y2label:'ASCAT SSM [%]',
+			y2label:'CCI SSM [%]',
 			//title:'soil moisture data',
 			colors:['#409300','#5791B4'],
 			zoomCallback:function(minDate,maxDate,yRanges){
@@ -499,8 +500,8 @@ ValidationViewer.prototype.loadData=function(scaling,snow_depth,st_l1,air_temp,s
 		else{
 			$('#'+data_div).css('width',_self.graph_width-55+'px');
 		
-			this.graph=new Dygraph(document.getElementById(data_div),data.ascat_insitu.data,{		
-			labels:data.ascat_insitu.labels,labelsDiv:label_div,labelsSeparateLines: true,connectSeparatedPoints:true,legend:'always',
+			this.graph=new Dygraph(document.getElementById(data_div),data.validation_data.data,{		
+			labels:data.validation_data.labels,labelsDiv:label_div,labelsSeparateLines: true,connectSeparatedPoints:true,legend:'always',
 			axes:{
 				y:{
 				 valueRange: value_range
@@ -670,8 +671,8 @@ ValidationViewer.prototype.drawScatter=function(div){
 			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 			
-		  x.domain(d3.extent(_self.data.ascat_insitu.data,function(d) { return d[1]; })).nice();
-		  y.domain(d3.extent(_self.data.ascat_insitu.data,function(d) { return d[2]; })).nice();
+		  x.domain(d3.extent(_self.data.validation_data.data,function(d) { return d[1]; })).nice();
+		  y.domain(d3.extent(_self.data.validation_data.data,function(d) { return d[2]; })).nice();
 			
 		  svg.append("g")
 			  .attr("class", "x axis")
@@ -693,10 +694,10 @@ ValidationViewer.prototype.drawScatter=function(div){
 			  .attr("y", 6)
 			  .attr("dy", ".7em")
 			  .style("text-anchor", "end")
-			  .text("ASCAT SSM")
+			  .text("CCI SSM")
 
 		  svg.selectAll(".dot")
-			  .data(_self.data.ascat_insitu.data)
+			  .data(_self.data.validation_data.data)
 			.enter().append("circle")
 			  .attr("class", "dot")
 			  .attr("r", 1.5)
