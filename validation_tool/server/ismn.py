@@ -87,10 +87,11 @@ def ismn_metadata(path):
                 "stationID": stationname,
                 "extMetadata": None,
                 "station_name": stationname,
-                "variableText": '<br>'.join(station.variables),
+                "variableText": '<br>'.join(np.unique(station.variables)),
                 "depthText": get_depth_text(station.depth_from,
-                                            station.depth_to),
-                "sensorText": '<br>'.join(station.sensors),
+                                            station.depth_to,
+                                            station.variables),
+                "sensorText": '<br>'.join(np.unique(station.sensors)),
                 "maximum": dmax.isoformat(),
                 "minimum": dmin.isoformat()
             }
@@ -99,13 +100,14 @@ def ismn_metadata(path):
     return metadata
 
 
-def get_depth_text(depths_from, depths_to):
+def get_depth_text(depths_from, depths_to, variables):
 
     l = []
-    for depth_to, depth_from in zip(depths_to, depths_from):
-        l.append("{:.2f} - {:.2f} m".format(depth_from, depth_to))
+    for depth_to, depth_from, var in zip(depths_to, depths_from, variables):
+        if var == "soil moisture":
+            l.append("{:.2f} - {:.2f} m".format(depth_from, depth_to))
 
-    return '<br>'.join(l)
+    return '<br>'.join(np.unique(l))
 
 
 def variable_list(path, stationname):
