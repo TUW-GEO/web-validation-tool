@@ -14,7 +14,7 @@ VALIDATION_LOOKUP = {'xray': XarrayDs}
 """list of validation datasets, where each validation dataset is defined by a
 dictionary. Each dictionary must have the following keys:
 
-* type: one of ['xray'], has to be in the validation_lookup dictionary
+* type: one of the types in the validation_lookup dictionary
 * name: string of the name of the dataset
 * fid: file identifier, string of Filename or URL(for OpenDAP datasets)
 * variables: list of strings specifying the variables to read from the dataset.

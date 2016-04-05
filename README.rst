@@ -1,19 +1,50 @@
-===============
-validation_tool
-===============
+===================================
+ISMN Dataviewer and Validation tool
+===================================
 
-Source code of the ASCAT validation Tool. This version depends on a connection
-to a postgresql database running on dbs1.ipf.tuwien.ac.at. The included json
-file in network_stations fits to the stations also in the database.
+This is a webapplication that can host your downloaded ISMN data so that it can
+be accessed in a Browser. Just like the ISMN Dataviewer on the official website.
+Additionally it can be linked with external data enabling the comparison of the
+ISMN data with remotely sensed or modelled datasets.
 
-It is planned that future versions will drop this dependency and work with data
-from WebServices or netCDF files directly on disk if it is not avoidable.
+Installation
+============
 
+Clone this repository and install all the dependencies using miniconda_. The following script 
+
+.. code::
+
+   conda env create -f environment.yml
+   source activate validation_tool
+   python setup.py develop
+
+will create a new conda environment with all the necessary dependencies. Then
+activate it and install the ``validation_tool`` in development mode into this
+environment.
+
+.. _miniconda: http://conda.pydata.org/miniconda.html
 
 Run locally
 ===========
 
-Run ``python app.py``, then visit http://localhost:5000
+Run ``python validation_tool/app.py``, then visit http://localhost:5000
+
+This runs a flask development Server. If you want to use this in production for
+some reason then please consult the flask manual to setup a proper server.
+
+This will host the ISMN test data included in ``tests/test_ismn``.
+
+Configure to host your own ISMN dataset
+=======================================
+
+Open the file ``validation_tool/default_settings.py`` and change the folder to
+which the ``ISMN_PATH`` variable points.
+
+During the first run after this change the program will parse your ISMN folder
+and store some metadata in the file ``ismn_metadata.json`` in the ISMN folder.
+This can take a few minutes for bigger datasets but is only a one time thing. If
+you add new data to the ISMN folder then delete this json file to trigger a
+rebuild of the metadata cache.
 
 
 Note
