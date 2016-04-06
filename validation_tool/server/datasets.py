@@ -38,7 +38,7 @@ import xarray
 class XarrayDs(object):
     """
     Supports reading from xarrays including the xarray OpenDAP support.
-
+    This dataset reads only from one variable.
 
     Parameters
     ----------
@@ -46,17 +46,17 @@ class XarrayDs(object):
         Dataset name to use, will also prefix variables.
     fid: string
         File identifier, either a filename or a OpenDAP URL.
-    variables: list
-        List of variable to read from the dataset. 
+    variable: string
+        Variable to read from the dataset.
     """
 
-    def __init__(self, name, fid, variables):
+    def __init__(self, name, fid, variable):
         self.name = name
         self.xr = xarray.open_dataset(fid)
-        self.variables = variables
+        self.variable = variable
 
         self.rname_dict = {}
-        for v in self.variables:
+        for v in [self.variable]:
             self.rname_dict[v] = '_'.join([self.name, v])
 
     def read(self, lon, lat):
@@ -78,7 +78,44 @@ class XarrayDs(object):
         df: pandas.DataFrame
         """
 
-        ds = self.xr[self.variables].sel(lon=lon, lat=lat, method='nearest')
-        df = ds.to_dataframe()[self.variables].dropna()
+        ds = self.xr[self.variable].sel(lon=lon, lat=lat, method='nearest')
+        df = ds.to_dataframe()[self.variable].dropna()
         df = df.rename(columns=self.rname_dict)
         return df
+
+    def get_metadata(self):
+        """
+        Get metadata about the variable.
+
+        If a field is not available then it is set to None.
+
+        Returns
+        -------
+        long_name: string
+            long name of the variable
+        units: string
+            units of the variable
+        flag_values: list
+            if the variable is a flag then these are the possible values
+        flag_meanings: list
+            if the variable is a flag then these are the meanings
+            corresponding to the flag_values
+        """
+        try:
+            long_name = self.xr[self.variable].long_name
+        except AttributeError:
+            long_name = None
+        try:
+            units = self.xr[self.variable].units
+        except AttributeError:
+            units = None
+        try:
+            flag_meanings = self.xr[self.variable].flag_meanings
+        except AttributeError:
+            flag_meanings = None
+        try:
+            flag_values = self.xr[self.variable].flag_values
+        except AttributeError:
+            flag_values = None
+
+        return long_name, units, flag_values, flag_meanings
