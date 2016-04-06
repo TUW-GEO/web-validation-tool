@@ -42,7 +42,6 @@ def getoptions():
     """
 
     scaling_options = {'noscale': 'No scaling',
-                       'porosity': 'Scale using porosity',
                        'linreg': 'Linear Regression',
                        'mean_std': 'Mean - standard deviation',
                        'min_max': 'Minimum,maximum',
