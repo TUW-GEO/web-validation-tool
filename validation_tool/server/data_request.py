@@ -143,7 +143,6 @@ def compare_data(ismn_data, validation_data,
     for dname in validation_data:
         vdata = validation_data[dname]
         vdata_label = 'cci_sm'
-        vdata = vdata[vdata_label]
 
         matched_data = temp_match.matching(
             ismn_data, vdata, window=1)
@@ -214,7 +213,7 @@ def get_validation_data(lon, lat):
     for ds in app.config['VALIDATION_DS']:
         name = ds['name']
         cls = app.config['VALIDATION_LOOKUP'][ds['type']]
-        dataset = cls(name, ds['fid'], ds['variables'])
+        dataset = cls(name, ds['fid'], ds['variable'])
         data = dataset.read(lon, lat)
         datasets[name] = data
 

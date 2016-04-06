@@ -17,10 +17,10 @@ dictionary. Each dictionary must have the following keys:
 * type: one of the types in the validation_lookup dictionary
 * name: string of the name of the dataset
 * fid: file identifier, string of Filename or URL(for OpenDAP datasets)
-* variables: list of strings specifying the variables to read from the dataset.
+* variable: string specifying the variable to read from the dataset.
 
 """
 VALIDATION_DS = [{'type': 'xray',
                   'name': 'cci',
                   'fid': "http://www.geo.tuwien.ac.at:8080/thredds/dodsC/testAll/ESACCI-SOILMOISTURE-L3S-SSMV-COMBINED-197811-201512_time-13575_lat-10_lon-10.nc",
-                  'variables': ['sm']}]
+                  'variable': 'sm'}]

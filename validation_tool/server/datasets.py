@@ -55,9 +55,7 @@ class XarrayDs(object):
         self.xr = xarray.open_dataset(fid)
         self.variable = variable
 
-        self.rname_dict = {}
-        for v in [self.variable]:
-            self.rname_dict[v] = '_'.join([self.name, v])
+        self.dataset_name = '_'.join([name, variable])
 
     def read(self, lon, lat):
         """
@@ -79,9 +77,9 @@ class XarrayDs(object):
         """
 
         ds = self.xr[self.variable].sel(lon=lon, lat=lat, method='nearest')
-        df = ds.to_dataframe()[self.variable].dropna()
-        df = df.rename(columns=self.rname_dict)
-        return df
+        ser = ds.to_dataframe()[self.variable].dropna()
+        ser.name = self.dataset_name
+        return ser
 
     def get_metadata(self):
         """
