@@ -9,14 +9,11 @@ import scipy.stats as sc_stats
 import numpy as np
 import pandas as pd
 from datetime import datetime
-import time
 
-from validation_tool.iout.db_model import interface
-from geo_python.RS.dataspecific.ISMN.db_model import ISMN_interface
 import pytesmo.temporal_matching as temp_match
-import geo_python.general.time_series.scaling as scale
-import geo_python.general.time_series.metrics as metrics
-import geo_python.general.time_series.anomaly as anomaly_calc
+import pytesmo.scaling as scale
+import pytesmo.metrics as metrics
+import pytesmo.time_series.anomaly as anomaly_calc
 
 from validation_tool import app
 

@@ -1,7 +1,6 @@
 # Add your requirements here like:
 # numpy
 # scipy>=0.9
-geo_python
 sqlalchemy
 geoalchemy2
 numpy
@@ -14,4 +13,5 @@ cython
 netCDF4
 pytesmo
 flask
+xarray
 

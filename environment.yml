@@ -46,13 +46,13 @@ dependencies:
 - tk=8.5.18=0
 - werkzeug=0.11.4=py27_0
 - wheel=0.29.0=py27_0
+- xarray=0.7.2=py27_0
 - zlib=1.2.8=0
 - pip:
   - autopep8==1.2.2
   - backports-abc==0.4
   - backports.ssl-match-hostname==3.4.0.2
   - decorator==4.0.9
-  - geo-python==1.1
   - geoalchemy2==0.2.6
   - ipdb==0.9.0
   - ipython==4.1.2
