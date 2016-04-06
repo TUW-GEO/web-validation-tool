@@ -22,6 +22,7 @@ from validation_tool.server.ismn import get_station_data
 from validation_tool.server.ismn import get_station_lonlat
 from validation_tool.server.ismn import get_station_first_sm_layer
 from validation_tool.server.data_request import get_validation_data
+from validation_tool.server.data_request import get_validation_metadata
 
 
 @app.route('/')
@@ -48,7 +49,11 @@ def getoptions():
                        'lin_cdf_match': 'Piecewise linear CDF matching',
                        'cdf_match': 'CDF matching'}
 
-    data = jsonify({'scaling': scaling_options})
+    # get available validation datasets
+    validation_metadata = get_validation_metadata()
+
+    data = jsonify({'scaling': scaling_options,
+                    'validation_datasets': validation_metadata})
     resp = make_response(data)
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp

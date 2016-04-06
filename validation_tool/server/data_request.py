@@ -218,3 +218,23 @@ def get_validation_data(lon, lat):
         datasets[name] = data
 
     return datasets
+
+
+def get_validation_metadata():
+    """
+    Read metadata from the validation datasets.
+    """
+
+    datasets = {}
+    for ds in app.config['VALIDATION_DS']:
+        name = ds['name']
+        cls = app.config['VALIDATION_LOOKUP'][ds['type']]
+        dataset = cls(name, ds['fid'], ds['variable'])
+        long_name, units, flag_values, flag_meanings = dataset.get_metadata()
+        metadata = dict(long_name=long_name,
+                        units=units,
+                        flag_values=flag_values,
+                        flag_meanings=flag_meanings)
+        datasets[name] = metadata
+
+    return datasets
