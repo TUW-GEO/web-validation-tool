@@ -70,7 +70,7 @@ def getlatlon():
     lat = float(request.args.get('lat'))
     lon = float(request.args.get('lon'))
 
-    resp = make_response({})
+    resp = make_response(jsonify({}))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
