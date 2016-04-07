@@ -62,6 +62,7 @@ function ValidationViewer(div) {
 */
 ValidationViewer.prototype.unset = function() {
     this.graph = null;
+    this.era_graph = null;
     $('#' + this.div).remove();
 };
 
@@ -149,7 +150,7 @@ ValidationViewer.prototype.openViewer = function(station) {
             $('#station_info_area').removeClass('station_info_area_active');
             $('#validation_window').addClass("validation_window_inactive");
             $('#validation_window').removeClass("validation_window_active");
-            $('#validation_window').html('');
+            $('#Results').html('');
             $('#map_overlay').fadeOut();
 
         });
@@ -246,68 +247,12 @@ ValidationViewer.prototype.buildViewer = function() {
     var _self = this;
     $.getJSON(this.host + '/getoptions', function(options) {
 
-        $('#validation_window').append('<div class="step_frame"><h5>Masking using ERA-Interim data and Surface State Flag(SSF)</h5><div class="graph_frame"><div id="era_data" style="height: 200px; width: ' + _self.graph_width + 'px;">\
-										</div><div id="era_data_labels" style="width: ' + _self.graph_width + 'px; height: 60px;"></div></div><div id="masking_form" class="forms"></div></div>');
-
-        $('#validation_window').append('<div class="step_frame"><h5>Scale CCI SM data to insitu and select anomaly</h5><div id="tabs">\
-											<ul>\
-												<li><a id="absolute" href="#tabs-1">Absolute values</a></li>\
-												<li><a id="anomalies_clim" href="#tabs-2" title="Anomalies calculated by subtracting\
-												the climatology from the absolute values. \
-												Results will be shown below after loading the time series">Anomalies (climatology)</a></li>\
-												<li><a id="anomalies_average" href="#tabs-3" title="Anomalies calculated by subtracting the\
-												35 day mean around each absolute value from this absolute value. \
-												Results will be shown below after loading the time series.">Anomalies (35 day window)</a></li>\
-											</ul>\
-											<div id="tabs-1"></div>\
-											<div id="tabs-2"></div>\
-											<div id="tabs-3"></div>\
-										</div><div id="scaling_form" class="forms"></div></div>');
-
-        $('#tabs-1').append('<div class="step_frame"><div class="graph_frame"><div id="scaled_data" style="height: 200px; width: ' + _self.graph_width + 'px;">\
-										</div><div id="scaled_data_labels" style="width: ' + _self.graph_width + 'px; height: 60px;"></div></div></div>');
-
-        $('#tabs-2').append('<div class="step_frame"><div class="graph_frame"><div id="scaled_data_climatology" style="height: 200px; width: ' + _self.graph_width + 'px;">\
-										</div><div id="scaled_data_labels_climatology" style="width: ' + _self.graph_width + 'px; height: 60px;"></div></div></div>');
-
-        $('#tabs-3').append('<div class="step_frame"><div class="graph_frame"><div id="scaled_data_average" style="height: 200px; width: ' + _self.graph_width + 'px;">\
-										</div><div id="scaled_data_labels_average" style="width: ' + _self.graph_width + 'px; height: 60px;"></div></div></div>');
-
         $('#tabs').tabs();
 
         loadingGif('era_data');
         loadingGif('scaled_data');
 
-        var html = '<h2> Select different masking values</h2><br>Mask values of:<br> \
-						Snow depth >= <input class="numeric" type="text" id="snow_depth" size="3" value="' + _self.standard_snow_depth + '"/> m<br>\
-						Soil temperature level 1 < <input class="numeric" type="text" id="st_l1" size="3" value="' + _self.standard_st_l1 + '"/> &deg;C<br>\
-						2m air temperature < <input class="numeric" type="text" id="air_temp" size="3" value="' + _self.standard_air_temp + '"/>&deg;C<br>\
-						<input type="checkbox" id="ssf_masking" name="ssf_masking" checked> use ASCAT SSF ';
-
-        $('#masking_form').append(html);
-
         $(".numeric").numeric();
-
-
-        var html = '<h2>Select different scaling</h2>';
-
-        $.each(options.scaling, function(key, value) {
-
-            html += '<input name="scaling_selector" type="radio" value="' + key + '"';
-            if (key === _self.standard_scaling) html += 'checked';
-            html += '>' + value + '<br>';
-
-
-
-
-        });
-
-        html += '</select><br>';
-        $('#scaling_form').append(html);
-
-        $('#validation_window').append('<div class="step_frame"><div class="graph_frame" style="border:none;"><h5>Results</h5><div id="Results"></div></div><div id="load_button" class="forms">\
-										Choose different masking <br> and scaling settings and <br> <a href="" id="loading_button" class="button">load new results</a></div><br>&nbsp;<br>');
-
 
         $('.graph_frame').css('width', _self.graph_width + 'px');
 
