@@ -161,9 +161,12 @@
                 Master = new Wrapper(map, info_map, true, true, true, 4);
 
                 Master.addNetworksJson(networks);
+
+                /* beautify ignore:start */
                 {% if validation %}
                 Master.activateValidationFunction();
                 {% endif %}
+                /* beautify ignore:end */
 
                 google.maps.event.addListener(map, 'click', function() {
                     infoWindow.open(null, null);
@@ -282,17 +285,34 @@
         <a href="#" class="Button" style="float:right;" id="info_button" onclick="showMoreInfo()">More Information</a>
         <div id="banner" class="hidden">
 
-            <div class="text_block">The aim of this website is to allow the scientific community to discuss and decide upon the best practices for the validation of satellite soil moisture data using long-term in situ soil moisture station data as e.g. available from the <a href="http://ismn.geo.tuwien.ac.at/" target="_blank">International Soil Moisture Network</a>. The validation methods have been tested using global surface soil moisture data derived from the Advanced Scatterometer (ASCAT) using the change detection method developed by <a href="http://rs.geo.tuwien.ac.at/" target="_blank">TU
-      Wien</a>, but are intended to be applicable to other microwave sensors such as SMOS, SMAP, AMSR-2, Windsat, Sentinel-1 etc. as well.
+            <div class="text_block">
+                The aim of this website is to allow the scientific community to
+                discuss and decide upon the best practices for the validation of
+                satellite soil moisture data using long-term in situ soil
+                moisture station data as e.g. available from the
+                <a href="http://ismn.geo.tuwien.ac.at/" target="_blank">International Soil Moisture Network</a>.
+                The validation methods have been tested using global surface
+                soil moisture data derived from the Advanced Scatterometer (ASCAT) using the change detection method developed by
+                <a href="http://rs.geo.tuwien.ac.at/" target="_blank">TU Wien</a>,
+                but are intended to be applicable to other microwave sensors
+                such as SMOS, SMAP, AMSR-2, Windsat, Sentinel-1 etc. as well.
 
-                <div class="hidden">If you are interested in contributing to this scientific effort, please register here.</div>
+                <div class="hidden">
+                    If you are interested in contributing to this scientific
+                    effort, please register here.
+                </div>
             </div>
 
 
 
-            <div class="text_block">The website has been developed within the framework of the ESA projects CEOS Cal/Val Portal (ESRIN/RFQ/3-13669/12/I-BG) and ISMN (4000102722/10/NL/FF/fk). Furthermore, the support of the following projects is acknowledged:<a href="http://hsaf.meteoam.it/" target="_blank"> EUMETSAT H-SAF</a>,
+            <div class="text_block">
+                The website has been developed within the framework of the ESA
+                projects CEOS Cal/Val Portal (ESRIN/RFQ/3-13669/12/I-BG) and ISMN (4000102722/10/NL/FF/fk).
+                Furthermore, the support of the following projects is acknowledged:
+                <a href="http://hsaf.meteoam.it/" target="_blank"> EUMETSAT H-SAF</a>,
                 <a href="http://www.esa-soilmoisture-cci.org/" target="_blank"> ESA Climate Change Initiative</a>,
-                <a href="http://land.copernicus.eu/global/" target="_blank"> GMES/Copernicus Global Land Service</a>.</div>
+                <a href="http://land.copernicus.eu/global/" target="_blank"> GMES/Copernicus Global Land Service</a>.
+            </div>
 
             <div class="text_block">
                 <a href="http://rs.geo.tuwien.ac.at/" target="_blank"><img class="logo" src="{{ url_for('static', filename='images/logos/GEO Logo.png') }}"></a>
@@ -302,9 +322,6 @@
                 <a href="http://www.esa-soilmoisture-cci.org/" target="_blank"><img class="logo" src="{{ url_for('static', filename='images/logos/CCIsoilMoisture_logo_vector.png') }}"></a>
                 <a href="http://ismn.geo.tuwien.ac.at/" target="_blank"><img class="logo" src="{{ url_for('static', filename='images/logos/ISMN_broad.png') }}"></a>
                 <a href="http://hsaf.meteoam.it/" target="_blank"><img class="logo" src="{{ url_for('static', filename='images/logos/HSAFLogo_solid_S.jpg') }}"></a>
-
-
-
             </div>
 
         </div>
