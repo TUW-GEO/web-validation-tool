@@ -216,7 +216,17 @@
                 <div id="masking_form" class="forms"></div>
             </div>
             <div class="step_frame">
-                <h5>Scale CCI SM data to insitu and select anomaly</h5>
+                <h5>Select scaling and anomaly calculation method:</h5>
+                <div id="scaling_form" class="forms step_frame">
+                    <ul>
+                        {% for key in scaling_options %}
+                        <li>
+                            <input name="scaling_selector" type="radio" value="{{key}}" {% if key==default_scaling %} checked {% endif %}> {{scaling_options[key]}}
+                        </li>
+                        {% endfor %}
+                    </ul>
+
+                </div>
                 <div id="tabs">
                     <ul>
                         <li><a id="absolute" href="#tabs-1">Absolute values</a></li>
@@ -250,7 +260,16 @@
                         </div>
                     </div>
                 </div>
-                <div id="scaling_form" class="forms"></div>
+                <div class="data-selector">
+                    <h5>Select Datasets</h5>
+                    <ul>
+                        <li>
+                            {% for key in val_ds %}
+                            <input name="val_ds_selector" type="checkbox" value="{{key}}" {% if key==default_val_ds%} checked {% endif %}> {{val_ds[key]['long_name']}}
+                            {% endfor %}
+                        </li>
+                    </ul>
+                </div>
             </div>
             <div class="step_frame">
                 <div class="graph_frame" style="border:none;">
@@ -286,29 +305,19 @@
         <div id="banner" class="hidden">
 
             <div class="text_block">
-                The aim of this website is to allow the scientific community to
-                discuss and decide upon the best practices for the validation of
-                satellite soil moisture data using long-term in situ soil
-                moisture station data as e.g. available from the
-                <a href="http://ismn.geo.tuwien.ac.at/" target="_blank">International Soil Moisture Network</a>.
-                The validation methods have been tested using global surface
-                soil moisture data derived from the Advanced Scatterometer (ASCAT) using the change detection method developed by
-                <a href="http://rs.geo.tuwien.ac.at/" target="_blank">TU Wien</a>,
-                but are intended to be applicable to other microwave sensors
-                such as SMOS, SMAP, AMSR-2, Windsat, Sentinel-1 etc. as well.
+                The aim of this website is to allow the scientific community to discuss and decide upon the best practices for the validation of satellite soil moisture data using long-term in situ soil moisture station data as e.g. available from the
+                <a href="http://ismn.geo.tuwien.ac.at/" target="_blank">International Soil Moisture Network</a>. The validation methods have been tested using global surface soil moisture data derived from the Advanced Scatterometer (ASCAT) using the change detection method developed by
+                <a href="http://rs.geo.tuwien.ac.at/" target="_blank">TU Wien</a>, but are intended to be applicable to other microwave sensors such as SMOS, SMAP, AMSR-2, Windsat, Sentinel-1 etc. as well.
 
                 <div class="hidden">
-                    If you are interested in contributing to this scientific
-                    effort, please register here.
+                    If you are interested in contributing to this scientific effort, please register here.
                 </div>
             </div>
 
 
 
             <div class="text_block">
-                The website has been developed within the framework of the ESA
-                projects CEOS Cal/Val Portal (ESRIN/RFQ/3-13669/12/I-BG) and ISMN (4000102722/10/NL/FF/fk).
-                Furthermore, the support of the following projects is acknowledged:
+                The website has been developed within the framework of the ESA projects CEOS Cal/Val Portal (ESRIN/RFQ/3-13669/12/I-BG) and ISMN (4000102722/10/NL/FF/fk). Furthermore, the support of the following projects is acknowledged:
                 <a href="http://hsaf.meteoam.it/" target="_blank"> EUMETSAT H-SAF</a>,
                 <a href="http://www.esa-soilmoisture-cci.org/" target="_blank"> ESA Climate Change Initiative</a>,
                 <a href="http://land.copernicus.eu/global/" target="_blank"> GMES/Copernicus Global Land Service</a>.

@@ -18,9 +18,24 @@ dictionary. Each dictionary must have the following keys:
 * name: string of the name of the dataset
 * fid: file identifier, string of Filename or URL(for OpenDAP datasets)
 * variable: string specifying the variable to read from the dataset.
+* long_name: string to show in the data viewer
 
 """
 VALIDATION_DS = [{'type': 'xray',
                   'name': 'cci',
                   'fid': "http://www.geo.tuwien.ac.at:8080/thredds/dodsC/testAll/ESACCI-SOILMOISTURE-L3S-SSMV-COMBINED-197811-201512_time-13575_lat-10_lon-10.nc",
-                  'variable': 'sm'}]
+                  'variable': 'sm',
+                  'long_name': 'CCI soil moisture'}]
+
+# set a dataset that should be chosen to validate against by default
+# has to be a name in the VALIDATION_DS list.
+DEFAULT_VAL_DS = 'cci'
+
+# Other default settings
+
+SCALING_OPTIONS = {'noscale': 'No scaling',
+                   'linreg': 'Linear Regression',
+                   'mean_std': 'Mean - standard deviation',
+                   'min_max': 'Minimum,maximum',
+                   'lin_cdf_match': 'Piecewise linear CDF matching',
+                   'cdf_match': 'CDF matching'}

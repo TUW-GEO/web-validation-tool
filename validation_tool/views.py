@@ -29,8 +29,13 @@ def validation_tool():
         activate_validation = False
     else:
         activate_validation = True
-    return render_template('index.html', validation=activate_validation,
-                           dataset_name="CCI SM")
+    return render_template('index.html',
+                           validation=activate_validation,
+                           dataset_name="CCI SM",
+                           scaling_options=app.config['SCALING_OPTIONS'],
+                           default_scaling='cdf_match',
+                           val_ds=get_validation_metadata(),
+                           default_val_ds=app.config['DEFAULT_VAL_DS'])
 
 
 @app.route('/getoptions')
@@ -38,19 +43,12 @@ def getoptions():
     """
     sends available scaling options to client
     """
-
-    scaling_options = {'noscale': 'No scaling',
-                       'linreg': 'Linear Regression',
-                       'mean_std': 'Mean - standard deviation',
-                       'min_max': 'Minimum,maximum',
-                       'lin_cdf_match': 'Piecewise linear CDF matching',
-                       'cdf_match': 'CDF matching'}
-
     # get available validation datasets
     validation_metadata = get_validation_metadata()
 
-    data = jsonify({'scaling': scaling_options,
+    data = jsonify({'scaling': app.config['SCALING_OPTIONS'],
                     'validation_datasets': validation_metadata})
+
     resp = make_response(data)
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
