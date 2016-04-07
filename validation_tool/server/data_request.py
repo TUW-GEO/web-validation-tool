@@ -231,7 +231,9 @@ def get_validation_metadata():
         metadata = dict(long_name=long_name,
                         units=units,
                         flag_values=flag_values,
-                        flag_meanings=flag_meanings)
-        datasets[name] = metadata
+                        flag_meanings=flag_meanings,
+                        name=ds['variable'])
+        datasets[name] = {'long_name': ds['long_name'],
+                          'variable': metadata}
 
     return datasets
