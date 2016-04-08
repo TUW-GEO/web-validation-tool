@@ -34,6 +34,7 @@ pandas.DataFrame.
 
 import xarray
 from validation_tool import app
+import pynetcf
 
 
 class XarrayDs(object):
@@ -118,6 +119,27 @@ class XarrayDs(object):
             flag_values = None
 
         return long_name, units, flag_values, flag_meanings
+
+
+class CFTimeSeries(object):
+    """
+    Class that maps a pynetCF time series class to the interface of this tool.
+
+    Parameters
+    ----------
+    name: string
+        Dataset name to use, will also prefix variables.
+    fid: string
+        File identifier, either a filename or a path to a dataset on the disk.
+    variable: string
+        Variable to read from the dataset.
+    """
+
+    def __init__(self, name, fid, variable):
+
+        pass
+
+
 def init_ds(dsname):
     """
     initialize a dataset based on the global config VALIDATION_DS
