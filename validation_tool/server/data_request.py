@@ -16,6 +16,7 @@ import pytesmo.metrics as metrics
 import pytesmo.time_series.anomaly as anomaly_calc
 
 from validation_tool import app
+from validation_tool.server.datasets import init_ds
 
 
 def to_dygraph_format(self):
@@ -208,11 +209,9 @@ def get_validation_data(lon, lat):
 
     datasets = {}
     for ds in app.config['VALIDATION_DS']:
-        name = ds['name']
-        cls = app.config['VALIDATION_LOOKUP'][ds['type']]
-        dataset = cls(name, ds['fid'], ds['variable'])
+        dataset = init_ds(ds)
         data = dataset.read(lon, lat)
-        datasets[name] = data
+        datasets[dataset.name] = data
 
     return datasets
 
@@ -224,16 +223,15 @@ def get_validation_metadata():
 
     datasets = {}
     for ds in app.config['VALIDATION_DS']:
-        name = ds['name']
-        cls = app.config['VALIDATION_LOOKUP'][ds['type']]
-        dataset = cls(name, ds['fid'], ds['variable'])
+        dsconfig = app.config['VALIDATION_DS'][ds]
+        dataset = init_ds(ds)
         long_name, units, flag_values, flag_meanings = dataset.get_metadata()
         metadata = dict(long_name=long_name,
                         units=units,
                         flag_values=flag_values,
                         flag_meanings=flag_meanings,
-                        name=ds['variable'])
-        datasets[name] = {'long_name': ds['long_name'],
-                          'variable': metadata}
+                        name=ds)
+        datasets[dataset.name] = {'long_name': dsconfig['long_name'],
+                                  'variable': metadata}
 
     return datasets

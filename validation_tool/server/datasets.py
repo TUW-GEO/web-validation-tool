@@ -33,6 +33,7 @@ pandas.DataFrame.
 '''
 
 import xarray
+from validation_tool import app
 
 
 class XarrayDs(object):
@@ -117,3 +118,29 @@ class XarrayDs(object):
             flag_values = None
 
         return long_name, units, flag_values, flag_meanings
+def init_ds(dsname):
+    """
+    initialize a dataset based on the global config VALIDATION_DS
+
+    Parameters
+    ----------
+    dsname: string
+        Name of dataset to init
+
+    Returns
+    -------
+    dataset: object
+        Instance of the dataset
+    """
+    dsconfig = app.config['VALIDATION_DS'][dsname]
+
+    cls = app.config['VALIDATION_CLASSES'][dsconfig['type']]
+    if not 'kwargs' in dsconfig:
+        dsconfig['kwargs'] = {}
+
+    dataset = cls(dsname,
+                  dsconfig['fid'],
+                  dsconfig['variable'],
+                  **dsconfig['kwargs'])
+
+    return dataset
