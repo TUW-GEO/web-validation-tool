@@ -600,7 +600,7 @@ ValidationViewer.prototype.loadData = function(scaling, snow_depth, st_l1, air_t
 							  Scaling method: ' + data.settings.scaling + '<br>';
 
         if (!add_only) {
-            $('#Results').prepend('<div id="result' + _self.counter + '" class="result_frame"><br>' + settings_string + '<br><div class="graph_frame"><div id="scatter_stat_div' + _self.counter + '">\
+            $('#Results').prepend('<div id="result' + _self.counter + '" class="result_frame ui-corner-all"><div class="results_text">' + settings_string + '</div><br><div class="graph_frame"><div id="scatter_stat_div' + _self.counter + '">\
 			</div></div></div>');
         }
 
