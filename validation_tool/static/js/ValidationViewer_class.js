@@ -252,13 +252,12 @@ ValidationViewer.prototype.buildViewer = function() {
     $.getJSON(this.host + '/getoptions', function(options) {
 
         $('#tabs').tabs();
+        $('#masking-tabs').tabs();
 
         loadingGif('era_data');
         loadingGif('scaled_data');
 
         $(".numeric").numeric();
-
-        $('.graph_frame').css('width', _self.graph_width + 'px');
 
         $("#loading_button").bind('click', function(event) {
             event.preventDefault();
@@ -461,8 +460,6 @@ ValidationViewer.prototype.loadData = function(scaling, snow_depth, st_l1, air_t
 
         if (data.settings.scaling === 'No scaling') {
 
-            $('#' + data_div).css('width', '' + _self.graph_width + 'px');
-
             this.graph = new Dygraph(document.getElementById(data_div), data.validation_data.data, {
                 labels: data.validation_data.labels,
                 labelsDiv: label_div,
@@ -521,7 +518,6 @@ ValidationViewer.prototype.loadData = function(scaling, snow_depth, st_l1, air_t
             });
 
         } else {
-            $('#' + data_div).css('width', _self.graph_width - 55 + 'px');
 
             this.graph = new Dygraph(document.getElementById(data_div), data.validation_data.data, {
                 labels: data.validation_data.labels,

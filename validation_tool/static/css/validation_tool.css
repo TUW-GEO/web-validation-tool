@@ -190,7 +190,7 @@ a:hover {
 }
 
 #validation_window {
-    overflow: block;
+    overflow: hidden;
 }
 
 #station_info_area {
@@ -210,7 +210,8 @@ a:hover {
 }
 
 .statistics {
-    float: left;
+    overflow: auto;
+    width: auto;
     margin-top: 30px;
     margin-left: 15px;
 }
@@ -229,41 +230,27 @@ a:hover {
 }
 
 .validation_window_active {
-    float: left;
-    padding-left: 10px;
+    width: auto;
 }
 
 .step_frame {
     padding: 5px;
-    float: left;
-    clear: both;
 }
 
 #tabs {
-    float: left;
-    clear: both;
 }
 
 .graph_frame {
-    float: left;
-    clear: both;
 }
 
 .result_frame {
     display: none;
-    float: left;
-    clear: both;
     padding-left: 15px;
-    width: 96%;
-    border-top: 1px #eee solid;
-    border-left: 1px #eee solid;
-    border-bottom: 1px #bbb solid;
-    border-right: 1px #bbb solid;
+    border: 1px solid #dddddd;
 }
 
 .forms {
     padding-left: 10px;
-    float: left;
 }
 
 .forms li {
@@ -271,8 +258,6 @@ a:hover {
 }
 
 .data-selector {
-    float: right;
-    margin: 15px;
 }
 
 .data-selector ul{
@@ -582,7 +567,7 @@ h4:hover {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
     border-radius: 2px;
-    border: 0px !important;
+    border: 0px solid #2D6700 !important;
     display: inline-block;
     color: #ffffff;
     font-weight: normal;
@@ -664,7 +649,7 @@ h4:hover {
 .ui-datepicker-next:hover,
 .ui-datepicker-prev:hover,
 .ui-button:hover {
-    background-color: #666666 !important;
+    background-color: #2D6700 !important;
     color: #ffffff;
     cursor: pointer;
 }

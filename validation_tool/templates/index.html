@@ -207,15 +207,33 @@
         </div>
         <div id="validation_window" class='validation_window_inactive'>
             <div class="step_frame">
-                <h5>Masking Data</h5>
-                <div class="graph_frame">
-                    <div id="era_data" style="height: 200px;">
+
+                <div id="masking-tabs">
+                    <ul>
+                        <li><a id="masking_tab" href="#masking-tabs-1">Masking data</a></li>
+                    </ul>
+                    <div id="masking-tabs-1">
+                        <div class="step_frame">
+                            <div class="graph_frame">
+                                <div id="era_data" style="height: 200px;">
+                                </div>
+                                <div id="era_data_labels" style="height: 60px;"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div id="era_data_labels" style="height: 60px;"></div>
                 </div>
                 <div id="masking_form" class="forms"></div>
             </div>
             <div class="step_frame">
+                <div class="data-selector">
+                    <h5>Select Datasets to compare to:</h5>
+                    <ul>
+                        <li>
+                            {% for key in val_ds %}
+                            <input name="val_ds_selector" type="checkbox" value="{{key}}" {% if key==default_val_ds%} checked {% endif %}> {{val_ds[key]['long_name']}} {% endfor %}
+                        </li>
+                    </ul>
+                </div>
                 <h5>Select scaling and anomaly calculation method:</h5>
                 <div id="scaling_form" class="forms step_frame">
                     <ul>
@@ -259,16 +277,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="data-selector">
-                    <h5>Select Datasets</h5>
-                    <ul>
-                        <li>
-                            {% for key in val_ds %}
-                            <input name="val_ds_selector" type="checkbox" value="{{key}}" {% if key==default_val_ds%} checked {% endif %}> {{val_ds[key]['long_name']}}
-                            {% endfor %}
-                        </li>
-                    </ul>
                 </div>
             </div>
             <div class="step_frame">
