@@ -282,7 +282,6 @@ ValidationViewer.prototype.buildViewer = function() {
                            _self.standard_ssf_masking,
                            _self.anomaly, false);
 
-
         });
 
         $("#anomalies_clim").bind('click', function(event) {
@@ -291,12 +290,12 @@ ValidationViewer.prototype.buildViewer = function() {
             if (_self.clim_graph === null) {
                 loadingGif('scaled_data_climatology');
                 _self.loadData(_self.standard_scaling,
-                               _self.standard_snow_depth,
-                               _self.standard_st_l1,
-                               _self.standard_air_temp,
-                               _self.standard_ssf_masking,
-                               _self.anomaly,
-                               true);
+                    _self.standard_snow_depth,
+                    _self.standard_st_l1,
+                    _self.standard_air_temp,
+                    _self.standard_ssf_masking,
+                    _self.anomaly,
+                    true);
             } else {
                 _self.hideHSAFTarget();
             }
@@ -311,12 +310,12 @@ ValidationViewer.prototype.buildViewer = function() {
             if (_self.graph === null) {
                 loadingGif('scaled_data');
                 _self.loadData(_self.standard_scaling,
-                               _self.standard_snow_depth,
-                               _self.standard_st_l1,
-                               _self.standard_air_temp,
-                               _self.standard_ssf_masking,
-                               _self.anomaly,
-                               true);
+                    _self.standard_snow_depth,
+                    _self.standard_st_l1,
+                    _self.standard_air_temp,
+                    _self.standard_ssf_masking,
+                    _self.anomaly,
+                    true);
             } else {
                 _self.setHSAFTarget(_self.absolute_corr);
             }
@@ -328,23 +327,23 @@ ValidationViewer.prototype.buildViewer = function() {
             if (_self.avg_graph === null) {
                 loadingGif('scaled_data_average');
                 _self.loadData(_self.standard_scaling,
-                               _self.standard_snow_depth,
-                               _self.standard_st_l1,
-                               _self.standard_air_temp,
-                               _self.standard_ssf_masking,
-                               _self.anomaly,
-                               true);
+                    _self.standard_snow_depth,
+                    _self.standard_st_l1,
+                    _self.standard_air_temp,
+                    _self.standard_ssf_masking,
+                    _self.anomaly,
+                    true);
             } else {
                 _self.hideHSAFTarget();
             }
         });
         _self.loadData(_self.standard_scaling,
-                       _self.standard_snow_depth,
-                       _self.standard_st_l1,
-                       _self.standard_air_temp,
-                       _self.standard_ssf_masking,
-                       _self.anomaly,
-                       false);
+            _self.standard_snow_depth,
+            _self.standard_st_l1,
+            _self.standard_air_temp,
+            _self.standard_ssf_masking,
+            _self.anomaly,
+            false);
 
     });
 };
