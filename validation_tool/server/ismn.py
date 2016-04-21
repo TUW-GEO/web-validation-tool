@@ -186,6 +186,48 @@ def get_station_data(path, stationname, variable,
     return ds.data[variable]
 
 
+def prepare_station_interface(path, stationname, variable,
+                              depth_from, depth_to, sensor_id):
+    """
+    Prepare an interface to the requested station data that
+    provides the data via a read_ts(id) function. This is at the moment
+    necessary since the ISMN interface does not follow the standards of
+    other interfaces.
+
+    Parameters
+    ----------
+    path: string
+        Folder in which the ISMN data is stored
+    stationname: string
+        Name of the station
+    variable: string
+        Name of the variable to read
+    depth_from: string
+        starting depth of the variable
+    depth_to: string
+        end depth of the variable
+    sensor_id: string
+        Sensor id of the sensor to read
+
+    Returns
+    -------
+    iface: object
+        interface object which has a read_ts method
+    """
+    iface = ISMN_Interface(path)
+    station = iface.get_station(stationname)
+
+    def read_ts(idx):
+        ds = station.read_variable(variable.encode('ascii'),
+                                   float(depth_from),
+                                   float(depth_to),
+                                   sensor_id.encode('ascii'))
+        return ds.data
+
+    station.read_ts = read_ts
+    return station
+
+
 def get_station_lonlat(path, stationname):
     """
     Get the latitude and longitude coordinates from a station.

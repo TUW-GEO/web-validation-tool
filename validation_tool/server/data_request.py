@@ -89,7 +89,7 @@ def mask_data():
 
     era_labels, era_values = era_matched.to_dygraph_format()
 
-    era_data = {'labels': era_labels, 'data': era_values}
+    masking_data = {'labels': masking_labels, 'data': masking_values}
 
 
 def compare_data(ismn_data, validation_data,
@@ -210,8 +210,24 @@ def get_validation_data(lon, lat):
     datasets = {}
     for ds in app.config['VALIDATION_DS']:
         dataset = init_ds(ds)
-        data = dataset.read(lon, lat)
+        data = dataset.read_ts(lon, lat)
         datasets[dataset.name] = data
+
+    return datasets
+
+
+def get_validation_ds_dict():
+    """
+    Read metadata from the validation dataset and return as
+    dict compatible with pytesmo validation framework.
+    """
+
+    datasets = {}
+    for ds in app.config['VALIDATION_DS']:
+        dsconfig = app.config['VALIDATION_DS'][ds]
+        dataset = init_ds(ds)
+        datasets[dataset.name] = {'class': dataset,
+                                  'columns': [dsconfig['variable']]}
 
     return datasets
 

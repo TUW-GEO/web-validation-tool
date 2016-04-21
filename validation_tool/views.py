@@ -1,10 +1,14 @@
 
 import validation_tool.server.data_request as rs_data
 import pandas as pd
+import numpy as np
 
 import cStringIO
 import os
 import json
+
+from pytesmo.validation_framework.validation import Validation
+from pytesmo.validation_framework.metric_calculators import BasicMetricsPlusMSE
 
 from validation_tool import app
 from flask import request
@@ -17,9 +21,10 @@ png_buffer = cStringIO.StringIO()
 from validation_tool.server.ismn import ismn_metadata
 from validation_tool.server.ismn import variable_list
 from validation_tool.server.ismn import get_station_data
+from validation_tool.server.ismn import prepare_station_interface
 from validation_tool.server.ismn import get_station_lonlat
 from validation_tool.server.ismn import get_station_first_sm_layer
-from validation_tool.server.data_request import get_validation_data
+from validation_tool.server.data_request import get_validation_ds_dict
 from validation_tool.server.data_request import get_validation_metadata
 
 
@@ -92,10 +97,12 @@ def getdata():
     air_temp: float
         mask 2m air temperature lower than this value
     ssf_masking: boolean
-        use SSF for masking true or false    
+        use SSF for masking true or false
     """
     station_id = request.args.get('station_id')
     scaling = request.args.get('scaling')
+    if scaling == 'noscale':
+        scaling = None
     snow_depth = request.args.get('snow_depth')
     st_l1 = request.args.get('st_l1')
     air_temp = request.args.get('air_temp')
@@ -111,22 +118,84 @@ def getdata():
      sensor_id) = get_station_first_sm_layer(app.config['ISMN_PATH'],
                                              station_id)
 
-    ismn_ts = get_station_data(app.config['ISMN_PATH'],
-                               station_id,
-                               "soil moisture",
-                               depth_from, depth_to, sensor_id)
+    ismn_iface = prepare_station_interface(app.config['ISMN_PATH'],
+                                           station_id,
+                                           "soil moisture",
+                                           depth_from, depth_to, sensor_id)
 
+    validation_ds_dict = get_validation_ds_dict()
+    validation_ds_dict.update({'ISMN': {'class': ismn_iface,
+                                        'columns': ['soil moisture']}})
     lon, lat = get_station_lonlat(app.config['ISMN_PATH'],
                                   station_id)
-    validation_data = get_validation_data(lon, lat)
+    mcalc = BasicMetricsPlusMSE(other_name='k1',
+                                calc_tau=True).calc_metrics
+    masking_data = get_masking_data(lon, lat)
+    process = Validation(validation_ds_dict, 'ISMN',
+                         temporal_ref='cci',
+                         scaling=scaling,
+                         metrics_calculators={(2, 2): mcalc})
 
-    data, status = rs_data.compare_data(ismn_ts, validation_data,
-                                        scaling,
-                                        anomaly=anomaly)
+    df_dict = process.data_manager.get_data(1,
+                                            lon,
+                                            lat)
+
+    matched_data, result, used_data = process.perform_validation(
+        df_dict, (1, lon, lat))
+
+    res_key = list(result)[0]
+    data = used_data[res_key]
+    result = result[res_key][0]
+
+    # rename data to original names
+    rename_dict = {}
+    f = lambda x: "k{}".format(x) if x > 0 else 'ref'
+    for i, r in enumerate(res_key):
+        rename_dict[f(i)] = " ".join(r)
+
+    data.rename(columns=rename_dict, inplace=True)
+
+    labels, values = data.to_dygraph_format()
+
+    validation_datasets = {'labels': labels, 'data': values}
+
+    statistics = {'kendall': {'v': '%.2f' % result['tau'], 'p': '%.4f' % result['p_tau']},
+                  'spearman': {'v': '%.2f' % result['rho'], 'p': '%.4f' % result['p_rho']},
+                  'pearson': {'v': '%.2f' % result['R'], 'p': '%.4f' % result['p_R']},
+                  'bias': '%.4f' % result['BIAS'],
+                  'rmsd': {'rmsd': '%.4f' % np.sqrt(result['mse']),
+                           'rmsd_corr': '%.4f' % np.sqrt(result['mse_corr']),
+                           'rmsd_bias': '%.4f' % np.sqrt(result['mse_bias']),
+                           'rmsd_var': '%.4f' % np.sqrt(result['mse_var'])},
+                  'mse': {'mse': '%.4f' % result['mse'],
+                          'mse_corr': '%.4f' % result['mse_corr'],
+                          'mse_bias': '%.4f' % result['mse_bias'],
+                          'mse_var': '%.4f' % result['mse_var']}}
+
+    scaling_options = {'noscale': 'No scaling',
+                       'porosity': 'Scale using porosity',
+                       'linreg': 'Linear Regression',
+                       'mean_std': 'Mean - standard deviation',
+                       'min_max': 'Minimum,maximum',
+                       'lin_cdf_match': 'Piecewise <br> linear CDF matching',
+                       'cdf_match': 'CDF matching'}
+
+    if scaling is None:
+        scaling = 'noscale'
+    settings = {'scaling': scaling_options[scaling],
+                # 'snow_depth': mask['snow_depth'],
+                # 'surface_temp': mask['st_l1'],
+                # 'air_temp': mask['air_temp']
+                }
+
+    masking_data = {'labels': [], 'data': []}
+    output_data = {'validation_data': validation_datasets, 'masking_data': masking_data,
+                   'statistics': statistics, 'settings': settings}
+    status = 1
     if status == -1:
         data = 'Error'
     else:
-        data = jsonify(data)
+        data = jsonify(output_data)
 
     resp = make_response(data)
     resp.headers['Access-Control-Allow-Origin'] = '*'

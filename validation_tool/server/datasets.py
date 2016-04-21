@@ -28,7 +28,7 @@
 
 '''Supported Datasets for validation and masking in the tool.
 
-These classes have to have a read(lon, lat) method that returns a
+These classes have to have a read_ts(lon, lat) method that returns a
 pandas.DataFrame.
 '''
 
@@ -58,7 +58,7 @@ class XarrayDs(object):
 
         self.dataset_name = '_'.join([name, variable])
 
-    def read(self, lon, lat):
+    def read_ts(self, lon, lat):
         """
         Read time series data from a xarray. This is limited to datasets
         having lat, lon coordinates that are recognized by xarray.
@@ -77,8 +77,9 @@ class XarrayDs(object):
         df: pandas.DataFrame
         """
 
-        ds = self.xr[self.variable].sel(lon=lon, lat=lat, method='nearest')
-        ser = ds.to_dataframe()[self.variable].dropna()
+        ds = self.xr[self.variable].sel(
+            lon=lon, lat=lat, method='nearest')
+        ser = ds.to_dataframe()[[self.variable]].dropna()
         ser.name = self.dataset_name
         return ser
 
@@ -132,9 +133,11 @@ def init_ds(dsname):
     dataset: object
         Instance of the dataset
     """
-    dsconfig = app.config['VALIDATION_DS'][dsname]
+    all_ds = dict(app.config['VALIDATION_DS'])
+    all_ds.update(app.config['MASKING_DS'])
+    dsconfig = all_ds[dsname]
 
-    cls = app.config['VALIDATION_CLASSES'][dsconfig['type']]
+    cls = app.config['DS_CLASSES'][dsconfig['type']]
     if not 'kwargs' in dsconfig:
         dsconfig['kwargs'] = {}
 

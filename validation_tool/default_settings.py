@@ -5,10 +5,10 @@ from validation_tool.server.datasets import XarrayDs
 ISMN_PATH = os.path.join(os.path.dirname(__file__), '..', 'tests', 'test_ismn')
 
 
-# lookup between validation dataset types and the classes that are used for
+# lookup between dataset types and the classes that are used for
 # reading, all the classes here must accept, name, fid and variables in their
 # __init__
-VALIDATION_CLASSES = {'xray': XarrayDs}
+DS_CLASSES = {'xray': XarrayDs}
 
 
 """list of validation datasets, where each validation dataset is defined by a
