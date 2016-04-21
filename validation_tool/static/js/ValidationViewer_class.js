@@ -254,7 +254,7 @@ ValidationViewer.prototype.buildViewer = function() {
         $('#tabs').tabs();
         $('#masking-tabs').tabs();
 
-        loadingGif('era_data');
+        loadingGif('masking_data');
         loadingGif('scaled_data');
 
         $(".numeric").numeric();
@@ -422,9 +422,9 @@ ValidationViewer.prototype.loadData = function(scaling, snow_depth, st_l1, air_t
 
         var self = this;
 
-        _self.era_graph = new Dygraph(document.getElementById('era_data'), data.masking_data.data, {
+        _self.masking_graph = new Dygraph(document.getElementById('masking_data'), data.masking_data.data, {
             labels: data.masking_data.labels,
-            labelsDiv: 'era_data_labels',
+            labelsDiv: 'masking_data_labels',
             labelsSeparateLines: true,
             connectSeparatedPoints: true,
             legend: 'always',

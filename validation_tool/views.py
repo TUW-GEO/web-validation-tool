@@ -26,6 +26,8 @@ from validation_tool.server.ismn import get_station_lonlat
 from validation_tool.server.ismn import get_station_first_sm_layer
 from validation_tool.server.data_request import get_validation_ds_dict
 from validation_tool.server.data_request import get_validation_metadata
+from validation_tool.server.data_request import get_masking_metadata
+from validation_tool.server.data_request import get_masking_data
 
 
 @app.route('/')
@@ -40,6 +42,7 @@ def validation_tool():
                            scaling_options=app.config['SCALING_OPTIONS'],
                            default_scaling='cdf_match',
                            val_ds=get_validation_metadata(),
+                           masking_ds=get_masking_metadata(),
                            default_val_ds=app.config['DEFAULT_VAL_DS'])
 
 

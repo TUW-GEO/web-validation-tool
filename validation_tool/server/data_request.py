@@ -251,3 +251,39 @@ def get_validation_metadata():
                                   'variable': metadata}
 
     return datasets
+
+
+def get_masking_data(lon, lat):
+    """
+    Read data from the validation datasets
+    based on latitude and longitude.
+    """
+
+    datasets = {}
+    for ds in app.config['MASKING_DS']:
+        dataset = init_ds(ds)
+        data = dataset.read_ts(lon, lat)
+        datasets[dataset.name] = data
+
+    return datasets
+
+
+def get_masking_metadata():
+    """
+    Read metadata from the validation datasets.
+    """
+
+    datasets = {}
+    for ds in app.config['MASKING_DS']:
+        dsconfig = app.config['MASKING_DS'][ds]
+        dataset = init_ds(ds)
+        long_name, units, flag_values, flag_meanings = dataset.get_metadata()
+        metadata = dict(long_name=long_name,
+                        units=units,
+                        flag_values=flag_values,
+                        flag_meanings=flag_meanings,
+                        name=ds)
+        datasets[dataset.name] = {'long_name': dsconfig['long_name'],
+                                  'variable': metadata}
+
+    return datasets

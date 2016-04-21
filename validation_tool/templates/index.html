@@ -207,7 +207,16 @@
         </div>
         <div id="validation_window" class='validation_window_inactive'>
             <div class="step_frame">
-
+                <div class="data-selector">
+                    <h5>Select Datasets to use for masking:</h5>
+                    <ul>
+                        <li>
+                            {% for key in masking_ds %}
+                            <input name="masking_ds_selector" type="checkbox" value="{{key}}"> {{masking_ds[key]['long_name']}}
+                            {% endfor %}
+                        </li>
+                    </ul>
+                </div>
                 <div id="masking-tabs">
                     <ul>
                         <li><a id="masking_tab" href="#masking-tabs-1">Masking data</a></li>
@@ -215,9 +224,9 @@
                     <div id="masking-tabs-1">
                         <div class="step_frame">
                             <div class="graph_frame">
-                                <div id="era_data" style="height: 200px;">
+                                <div id="masking_data" style="height: 200px;">
                                 </div>
-                                <div id="era_data_labels" style="height: 60px;"></div>
+                                <div id="masking_data_labels" style="height: 60px;"></div>
                             </div>
                         </div>
                     </div>

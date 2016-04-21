@@ -32,6 +32,15 @@ VALIDATION_DS = {'cci': {'type': 'xray',
 # has to be a name in the VALIDATION_DS list.
 DEFAULT_VAL_DS = 'cci'
 
+
+# Masking datasets
+# Datasets to be available for masking, same structure as the validation
+# datasets
+MASKING_DS = {'eraland_st_l1': {'type': 'xray',
+                                'fid': "http://www.geo.tuwien.ac.at:8080/thredds/dodsC/testAll/ERALAND_gbg4-139-stacked-time_10000-lon_5-lat_5.nc",
+                                'variable': 'var139',
+                                'long_name': 'ERALAND 0-7cm soil temperature'}}
+
 # Other default settings
 
 SCALING_OPTIONS = {'noscale': 'No scaling',
