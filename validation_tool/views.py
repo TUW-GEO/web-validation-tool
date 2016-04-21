@@ -106,11 +106,9 @@ def getdata():
     scaling = request.args.get('scaling')
     if scaling == 'noscale':
         scaling = None
-    snow_depth = request.args.get('snow_depth')
-    st_l1 = request.args.get('st_l1')
-    air_temp = request.args.get('air_temp')
-    ssf_masking = request.args.get('ssf_masking')
-    ssf_dict = {'true': True, 'false': False}
+    masking_ids = request.args.getlist('masking_ds[]')
+    masking_ops = request.args.getlist('masking_op[]')
+    masking_values = request.args.getlist('masking_values[]')
 
     anomaly = request.args.get('anomaly')
     if anomaly == 'none':

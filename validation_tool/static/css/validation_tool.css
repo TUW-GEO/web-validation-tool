@@ -808,3 +808,7 @@ h4:hover {
     stroke: #000;
     shape-rendering: crispEdges;
 }
+
+.masking_input{
+    width: 50px;
+}

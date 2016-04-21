@@ -394,17 +394,25 @@ ValidationViewer.prototype.loadData = function(scaling, snow_depth, st_l1, air_t
         axis_settings = {
             valueRange: value_range_abs
         };
-
-
     }
+    var checked_masking_ds = [];
+    var masking_operator = [];
+    var masking_values = [];
+    $("input[name='masking_ds_selector']").each(function(index) {
+        if(this.checked){
+            checked_masking_ds.push(this.value);
+            masking_operator.push($("select[name='"+this.value+"']").val());
+            masking_values.push($("input[name='"+this.value+"']").val());
+        }
+    });
+
 
     $.getJSON(this.host + '/getdata', {
         station_id: this.selectedStation.id,
         scaling: scaling,
-        snow_depth: snow_depth,
-        st_l1: st_l1,
-        air_temp: air_temp,
-        ssf_masking: ssf_masking,
+        masking_ds : checked_masking_ds,
+        masking_op : masking_operator,
+        masking_values : masking_values,
         anomaly: anomaly
     }, function(data) {
         if (!add_only) {
