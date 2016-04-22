@@ -16,7 +16,7 @@ function ValidationViewer(div) {
     this.graph = null;
     this.clim_graph = null;
     this.avg_graph = null;
-    this.era_graph = null;
+    this.masking_graph = null;
     this.title = '';
 
     this.satGpi = null;
@@ -62,7 +62,8 @@ function ValidationViewer(div) {
 */
 ValidationViewer.prototype.unset = function() {
     this.graph = null;
-    this.era_graph = null;
+    this.masking_graph.destroy();
+    this.masking_graph = null;
     $('#' + this.div).remove();
 };
 
@@ -135,7 +136,7 @@ ValidationViewer.prototype.openViewer = function(station) {
         _self.graph = null;
         _self.clim_graph = null;
         _self.avg_graph = null;
-        _self.era_graph = null;
+        _self.masking_graph = null;
 
         $('#help_div').fadeOut();
 
@@ -272,9 +273,12 @@ ValidationViewer.prototype.buildViewer = function() {
                 graph_div += '_' + _self.anomaly;
             }
             loadingGif(graph_div);
+            loadingGif('masking_data');
             _self.clim_graph = null;
             _self.avg_graph = null;
             _self.graph = null;
+            _self.masking_graph.destroy();
+            _self.masking_graph = null;
             _self.loadData(_self.standard_scaling,
                            _self.standard_snow_depth,
                            _self.standard_st_l1,
@@ -436,18 +440,9 @@ ValidationViewer.prototype.loadData = function(scaling, snow_depth, st_l1, air_t
             labelsSeparateLines: true,
             connectSeparatedPoints: true,
             legend: 'always',
-            'snow_depth': {
-                axis: {}
-            },
-            axes: {
-                y2: {
-                    labelsKMB: true
-                }
-            },
             drawPoints: true,
+            valueRange: [-5, 40],
             ylabel: 'Temperature [&deg;C]',
-            y2label: 'Snow depth [m]',
-            //title:'ERA-Interim data for masking',
             colors: ['#04396C', '#A63100', '#FF9D73'],
             zoomCallback: function(minDate, maxDate, yRanges) {
 
@@ -462,6 +457,8 @@ ValidationViewer.prototype.loadData = function(scaling, snow_depth, st_l1, air_t
                 });
             }
 
+        });
+        _self.masking_graph.updateOptions({
         });
 
 
@@ -489,7 +486,7 @@ ValidationViewer.prototype.loadData = function(scaling, snow_depth, st_l1, air_t
                 colors: ['#409300', '#5791B4'],
                 zoomCallback: function(minDate, maxDate, yRanges) {
 
-                    _self.era_graph.updateOptions({
+                    _self.masking_graph.updateOptions({
                         dateWindow: [minDate, maxDate]
                     });
                     if (anomaly === 'climatology') {
@@ -543,7 +540,7 @@ ValidationViewer.prototype.loadData = function(scaling, snow_depth, st_l1, air_t
                 colors: ['#409300', '#5791B4'],
                 zoomCallback: function(minDate, maxDate, yRanges) {
 
-                    _self.era_graph.updateOptions({
+                    _self.masking_graph.updateOptions({
                         dateWindow: [minDate, maxDate]
                     });
                     if (anomaly === 'climatology') {

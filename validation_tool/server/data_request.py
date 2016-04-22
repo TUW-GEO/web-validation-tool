@@ -287,3 +287,22 @@ def get_masking_metadata():
                                   'variable': metadata}
 
     return datasets
+
+
+def get_masking_ds_dict(ids):
+    """
+    Read metadata from the validation dataset and return as
+    dict compatible with pytesmo validation framework.
+
+    ids: list
+        datasets to include
+    """
+
+    datasets = {}
+    for ds in ids:
+        dsconfig = app.config['MASKING_DS'][ds]
+        dataset = init_ds(ds)
+        datasets[dataset.name] = {'class': dataset,
+                                  'columns': [dsconfig['variable']]}
+
+    return datasets

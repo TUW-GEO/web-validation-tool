@@ -212,7 +212,7 @@
                     <ul>
                         <li>
                             {% for key in masking_ds %}
-                            <input name="masking_ds_selector" type="checkbox" value="{{key}}"> {{masking_ds[key]['long_name']}}
+                            <input name="masking_ds_selector" type="checkbox" value="{{key}}" checked> {{masking_ds[key]['long_name']}}
                             <select name="{{key}}">
                                 <option value="<" ><</option>
                                 <option value="<=" ><=</option>

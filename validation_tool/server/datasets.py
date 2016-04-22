@@ -81,6 +81,10 @@ class XarrayDs(object):
             lon=lon, lat=lat, method='nearest')
         ser = ds.to_dataframe()[[self.variable]].dropna()
         ser.name = self.dataset_name
+        try:
+            ser.index = ser.index.droplevel(1)
+        except AttributeError:
+            pass
         return ser
 
     def get_metadata(self):
@@ -119,6 +123,8 @@ class XarrayDs(object):
             flag_values = None
 
         return long_name, units, flag_values, flag_meanings
+
+
 def init_ds(dsname):
     """
     initialize a dataset based on the global config VALIDATION_DS
@@ -147,3 +153,33 @@ def init_ds(dsname):
                   **dsconfig['kwargs'])
 
     return dataset
+
+
+class MaskingAdapter(object):
+    """
+    Transform the given class to return a masked dataset
+    given the operator and threshold.
+
+    Parameters
+    ----------
+    cls: object
+        has to have read_ts method
+    operator: function
+        operator.lt(a, b)
+        operator.le(a, b)
+        operator.eq(a, b)
+        operator.ne(a, b)
+        operator.ge(a, b)
+        operator.gt(a, b)
+        or similar
+    threshold: value to use as the threshold combined with the operator
+    """
+
+    def __init__(self, cls, operator, threshold):
+        self.cls = cls
+        self.operator = operator
+        self.threshold = threshold
+
+    def read_ts(self, *args, **kwargs):
+        data = self.cls.read_ts(*args, **kwargs)
+        return self.operator(data, self.threshold)

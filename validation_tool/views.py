@@ -6,9 +6,12 @@ import numpy as np
 import cStringIO
 import os
 import json
+import operator
 
 from pytesmo.validation_framework.validation import Validation
 from pytesmo.validation_framework.metric_calculators import BasicMetricsPlusMSE
+from pytesmo.validation_framework.temporal_matchers import BasicTemporalMatching
+from pytesmo.validation_framework.data_manager import DataManager
 
 from validation_tool import app
 from flask import request
@@ -24,10 +27,14 @@ from validation_tool.server.ismn import get_station_data
 from validation_tool.server.ismn import prepare_station_interface
 from validation_tool.server.ismn import get_station_lonlat
 from validation_tool.server.ismn import get_station_first_sm_layer
+from validation_tool.server.ismn import get_station_start_end
 from validation_tool.server.data_request import get_validation_ds_dict
 from validation_tool.server.data_request import get_validation_metadata
 from validation_tool.server.data_request import get_masking_metadata
 from validation_tool.server.data_request import get_masking_data
+
+from validation_tool.server.data_request import get_masking_ds_dict
+from validation_tool.server.datasets import MaskingAdapter
 
 
 @app.route('/')
@@ -109,6 +116,7 @@ def getdata():
     masking_ids = request.args.getlist('masking_ds[]')
     masking_ops = request.args.getlist('masking_op[]')
     masking_values = request.args.getlist('masking_values[]')
+    masking_values = [float(x) for x in masking_values]
 
     anomaly = request.args.get('anomaly')
     if anomaly == 'none':
@@ -118,6 +126,48 @@ def getdata():
      depth_to,
      sensor_id) = get_station_first_sm_layer(app.config['ISMN_PATH'],
                                              station_id)
+    lon, lat = get_station_lonlat(app.config['ISMN_PATH'],
+                                  station_id)
+    start, end = get_station_start_end(app.config['ISMN_PATH'],
+                                       station_id, "soil moisture",
+                                       depth_from, depth_to)
+    period = [start, end]
+
+    masking_data = {'labels': [], 'data': []}
+    masking_masked_dict = None
+    if len(masking_ids) > 0:
+        # prepare masking datasets
+        masking_ds_dict = get_masking_ds_dict(masking_ids)
+        op_lookup = {'<': operator.lt,
+                     '<=': operator.le,
+                     '==': operator.eq,
+                     '>=': operator.ge,
+                     '>': operator.gt}
+        masking_masked_dict = {}
+        for masking_ds, masking_op, masking_value in zip(masking_ids,
+                                                         masking_ops,
+                                                         masking_values):
+
+            masking_masked_dict[masking_ds] = dict(masking_ds_dict[masking_ds])
+            new_cls = MaskingAdapter(masking_masked_dict[masking_ds]['class'],
+                                     op_lookup[masking_op],
+                                     masking_value)
+            masking_masked_dict[masking_ds]['class'] = new_cls
+
+        # use DataManager for reading masking datasets
+        masking_dm = DataManager(masking_ds_dict, masking_ids[0],
+                                 period=period)
+        masking_data = {}
+        for mds in masking_ids:
+            masking_data[mds] = masking_dm.read_ds(mds, lon, lat)
+        if len(masking_ids) > 1:
+            masking_data = BasicTemporalMatching().combinatory_matcher(masking_data, len(mds))
+        else:
+            masking_data = masking_data[masking_ids[0]]
+
+        labels, values = masking_data.to_dygraph_format()
+
+        masking_data = {'labels': labels, 'data': values}
 
     ismn_iface = prepare_station_interface(app.config['ISMN_PATH'],
                                            station_id,
@@ -127,15 +177,14 @@ def getdata():
     validation_ds_dict = get_validation_ds_dict()
     validation_ds_dict.update({'ISMN': {'class': ismn_iface,
                                         'columns': ['soil moisture']}})
-    lon, lat = get_station_lonlat(app.config['ISMN_PATH'],
-                                  station_id)
     mcalc = BasicMetricsPlusMSE(other_name='k1',
                                 calc_tau=True).calc_metrics
-    masking_data = get_masking_data(lon, lat)
     process = Validation(validation_ds_dict, 'ISMN',
                          temporal_ref='cci',
                          scaling=scaling,
-                         metrics_calculators={(2, 2): mcalc})
+                         metrics_calculators={(2, 2): mcalc},
+                         masking_datasets=masking_masked_dict,
+                         period=period)
 
     df_dict = process.data_manager.get_data(1,
                                             lon,
@@ -189,7 +238,6 @@ def getdata():
                 # 'air_temp': mask['air_temp']
                 }
 
-    masking_data = {'labels': [], 'data': []}
     output_data = {'validation_data': validation_datasets, 'masking_data': masking_data,
                    'statistics': statistics, 'settings': settings}
     status = 1

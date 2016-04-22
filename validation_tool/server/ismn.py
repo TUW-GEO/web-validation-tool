@@ -249,6 +249,36 @@ def get_station_lonlat(path, stationname):
     return station.longitude, station.latitude
 
 
+def get_station_start_end(path, stationname, variable,
+                          depth_from, depth_to):
+    """
+    Get the start and end date for the selected insitu time series.
+
+    Parameters
+    ----------
+    path: string
+        Folder in which the ISMN data is stored
+    stationname: string
+        Name of the station
+    variable: string
+        Name of the variable to read
+    depth_from: string
+        starting depth of the variable
+    depth_to: string
+        end depth of the variable
+
+    Returns
+    -------
+    start: datetime
+    end: datetime
+    """
+    iface = ISMN_Interface(path)
+    station = iface.get_station(stationname)
+    return station.get_min_max_obs_timestamp(variable=variable,
+                                             min_depth=depth_from,
+                                             max_depth=depth_to)
+
+
 def get_station_first_sm_layer(path, stationname):
     """
     Get the metadata of the first soil moisture layer of this variable.
