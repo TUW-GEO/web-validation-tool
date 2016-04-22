@@ -184,7 +184,8 @@ def getdata():
                          scaling=scaling,
                          metrics_calculators={(2, 2): mcalc},
                          masking_datasets=masking_masked_dict,
-                         period=period)
+                         period=period,
+                         temporal_window=1)
 
     df_dict = process.data_manager.get_data(1,
                                             lon,
