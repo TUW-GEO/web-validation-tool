@@ -731,7 +731,7 @@ ValidationViewer.prototype.drawScatter = function(div) {
         .attr("x", width)
         .attr("y", -6)
         .style("text-anchor", "end")
-        .text("insitu");
+        .text(_self.data.validation_data.labels[1]);
 
     svg.append("g")
         .attr("class", "y axis")
@@ -742,7 +742,7 @@ ValidationViewer.prototype.drawScatter = function(div) {
         .attr("y", 6)
         .attr("dy", ".7em")
         .style("text-anchor", "end")
-        .text("CCI SSM");
+        .text(_self.data.validation_data.labels[2]);
 
     svg.selectAll(".dot")
         .data(_self.data.validation_data.data)
