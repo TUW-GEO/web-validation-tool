@@ -156,11 +156,15 @@ def getdata():
         for mds in masking_ids:
             masking_data[mds] = masking_dm.read_ds(mds, lon, lat)
         if len(masking_ids) > 1:
-            masking_data = BasicTemporalMatching().combinatory_matcher(masking_data, len(mds))
+            masking_data = BasicTemporalMatching(window=1.0).combinatory_matcher(
+                masking_data, masking_ids[0], n=len(masking_ids))
+
+            if len(masking_data) > 0:
+                labels, values = masking_data[
+                    masking_data.keys()[0]].to_dygraph_format()
         else:
             masking_data = masking_data[masking_ids[0]]
-
-        labels, values = masking_data.to_dygraph_format()
+            labels, values = masking_data.to_dygraph_format()
 
         masking_data = {'labels': labels, 'data': values}
 

@@ -21,6 +21,8 @@ from validation_tool.server.datasets import init_ds
 
 def to_dygraph_format(self):
     labels = ['date']
+    if hasattr(self.columns, 'levels'):
+        self.columns = [' '.join(col).strip() for col in self.columns.values]
     labels.extend(self.columns.values.tolist())
     data_values = np.hsplit(self.values, self.columns.values.size)
     data_index = self.index.values.astype('M8[s]').tolist()
