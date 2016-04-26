@@ -130,6 +130,12 @@ ValidationViewer.prototype.openViewer = function(station) {
         _self.clim_graph = null;
         _self.avg_graph = null;
         _self.masking_graph = null;
+        $( "#tabs" ).tabs( "destroy" );
+
+        $("#loading_button").unbind('click');
+        $("#anomalies_clim").unbind('click');
+        $("#absolute").unbind('click');
+        $("#anomalies_average").unbind('click');
 
         $('#help_div').fadeOut();
 
@@ -246,6 +252,7 @@ ValidationViewer.prototype.buildViewer = function() {
     $.getJSON('getoptions', function(options) {
 
         $('#tabs').tabs();
+        $('#tabs').tabs('enable', '#absolute');
         $('#masking-tabs').tabs();
 
         loadingGif('masking_data');
