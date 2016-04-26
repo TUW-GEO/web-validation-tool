@@ -47,12 +47,6 @@ function ValidationViewer(div) {
         new google.maps.Size(25, 25),
         new google.maps.Point(0, 0),
         new google.maps.Point(12, 12));
-
-
-    // this.host = 'http://python.ipf.tuwien.ac.at/validation_tool/';
-    // this.port = '';
-    this.host = 'http://localhost:5000';
-    this.port = '8080';
 }
 
 
@@ -213,7 +207,7 @@ ValidationViewer.prototype.openViewer = function(station) {
     var station_location = station.getLocation();
 
 
-    $.getJSON(this.host + '/getlatlon', {
+    $.getJSON('getlatlon', {
         lat: station_location.lat(),
         lon: station_location.lng()
     }, function(gridpoints) {
@@ -249,7 +243,7 @@ ValidationViewer.prototype.buildViewer = function() {
 
 
     var _self = this;
-    $.getJSON(this.host + '/getoptions', function(options) {
+    $.getJSON('getoptions', function(options) {
 
         $('#tabs').tabs();
         $('#masking-tabs').tabs();
@@ -385,7 +379,7 @@ ValidationViewer.prototype.loadData = function(scaling, anomaly, add_only) {
     });
 
 
-    $.getJSON(this.host + '/getdata', {
+    $.getJSON('getdata', {
         station_id: this.selectedStation.id,
         scaling: scaling,
         masking_ds : checked_masking_ds,
