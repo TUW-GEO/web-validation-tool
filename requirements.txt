@@ -1,14 +1,11 @@
 # Add your requirements here like:
 # numpy
 # scipy>=0.9
-sqlalchemy
-geoalchemy2
 numpy
 pandas
 matplotlib
 scipy
 psycopg2
-statsmodels
 cython
 netCDF4
 pytesmo
