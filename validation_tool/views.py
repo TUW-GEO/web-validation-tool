@@ -6,12 +6,13 @@ import numpy as np
 import cStringIO
 import os
 import json
-import operator
 
 from pytesmo.validation_framework.validation import Validation
 from pytesmo.validation_framework.metric_calculators import BasicMetricsPlusMSE
 from pytesmo.validation_framework.temporal_matchers import BasicTemporalMatching
 from pytesmo.validation_framework.data_manager import DataManager
+from pytesmo.validation_framework.adapters import MaskingAdapter
+from pytesmo.validation_framework.adapters import AnomalyAdapter, AnomalyClimAdapter
 
 from validation_tool import app
 from flask import request
@@ -34,7 +35,6 @@ from validation_tool.server.data_request import get_masking_metadata
 from validation_tool.server.data_request import get_masking_data
 
 from validation_tool.server.data_request import get_masking_ds_dict
-from validation_tool.server.datasets import MaskingAdapter
 
 
 @app.route('/')
@@ -138,11 +138,6 @@ def getdata():
     if len(masking_ids) > 0:
         # prepare masking datasets
         masking_ds_dict = get_masking_ds_dict(masking_ids)
-        op_lookup = {'<': operator.lt,
-                     '<=': operator.le,
-                     '==': operator.eq,
-                     '>=': operator.ge,
-                     '>': operator.gt}
         masking_masked_dict = {}
         for masking_ds, masking_op, masking_value in zip(masking_ids,
                                                          masking_ops,
@@ -150,7 +145,7 @@ def getdata():
 
             masking_masked_dict[masking_ds] = dict(masking_ds_dict[masking_ds])
             new_cls = MaskingAdapter(masking_masked_dict[masking_ds]['class'],
-                                     op_lookup[masking_op],
+                                     masking_op,
                                      masking_value)
             masking_masked_dict[masking_ds]['class'] = new_cls
 
@@ -177,6 +172,15 @@ def getdata():
     validation_ds_dict = get_validation_ds_dict()
     validation_ds_dict.update({'ISMN': {'class': ismn_iface,
                                         'columns': ['soil moisture']}})
+
+    if anomaly is not None:
+        adapter = {'climatology': AnomalyClimAdapter,
+                   'average': AnomalyAdapter}
+        for dataset in validation_ds_dict:
+            validation_ds_dict[dataset]['class'] = adapter[
+                anomaly](validation_ds_dict[dataset]['class'],
+                         columns=validation_ds_dict[dataset]['columns'])
+
     mcalc = BasicMetricsPlusMSE(other_name='k1',
                                 calc_tau=True).calc_metrics
     process = Validation(validation_ds_dict, 'ISMN',
