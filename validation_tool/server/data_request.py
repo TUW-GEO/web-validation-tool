@@ -286,6 +286,8 @@ def get_masking_metadata():
                         flag_meanings=flag_meanings,
                         name=ds)
         datasets[dataset.name] = {'long_name': dsconfig['long_name'],
+                                  'default_op': dsconfig['default_op'],
+                                  'default_threshold': dsconfig['default_threshold'],
                                   'variable': metadata}
 
     return datasets

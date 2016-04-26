@@ -40,7 +40,15 @@ DEFAULT_VAL_DS = 'cci'
 MASKING_DS = {'eraland_st_l1': {'type': 'xray',
                                 'fid': "http://www.geo.tuwien.ac.at/thredds/dodsC/testAll/ERALAND_gbg4-139-stacked-1979-2014-time_10000,lon_5,lat_5.nc",
                                 'variable': 'var139',
-                                'long_name': 'ERALAND 0-7cm soil temperature'}}
+                                'long_name': 'ERALAND 0-7cm soil temperature',
+                                'default_op': '<',
+                                'default_threshold': 2},
+              'cci_flag': {'type': 'xray',
+                           'fid': "http://www.geo.tuwien.ac.at/thredds/dodsC/testAll/ESACCI-SOILMOISTURE-L3S-SSMV-COMBINED-197811-201512_time-13575_lat-10_lon-10.nc",
+                           'variable': 'flag',
+                           'long_name': 'CCI flag',
+                           'default_op': '>',
+                           'default_threshold': 0}}
 
 # Other default settings
 
@@ -48,5 +56,8 @@ SCALING_OPTIONS = {'noscale': 'No scaling',
                    'linreg': 'Linear Regression',
                    'mean_std': 'Mean - standard deviation',
                    'min_max': 'Minimum,maximum',
-                   'lin_cdf_match': 'Piecewise linear CDF matching',
-                   'cdf_match': 'CDF matching'}
+                   'lin_cdf_match': 'Piecewise linear CDF matching'
+                   }
+DEFAULT_SCALING = "lin_cdf_match"
+
+

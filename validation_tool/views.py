@@ -47,7 +47,7 @@ def validation_tool():
                            validation=activate_validation,
                            dataset_name="CCI SM",
                            scaling_options=app.config['SCALING_OPTIONS'],
-                           default_scaling='cdf_match',
+                           default_scaling=app.config['DEFAULT_SCALING'],
                            val_ds=get_validation_metadata(),
                            masking_ds=get_masking_metadata(),
                            default_val_ds=app.config['DEFAULT_VAL_DS'])
