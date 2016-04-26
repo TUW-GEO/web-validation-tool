@@ -62,7 +62,6 @@ function ValidationViewer(div) {
 */
 ValidationViewer.prototype.unset = function() {
     this.graph = null;
-    this.masking_graph.destroy();
     this.masking_graph = null;
     $('#' + this.div).remove();
 };
@@ -263,10 +262,6 @@ ValidationViewer.prototype.buildViewer = function() {
         $("#loading_button").bind('click', function(event) {
             event.preventDefault();
             _self.standard_scaling = $('input:radio[name=scaling_selector]:checked').val();
-            _self.standard_snow_depth = $('#snow_depth').val();
-            _self.standard_st_l1 = $('#st_l1').val();
-            _self.standard_air_temp = $('#air_temp').val();
-            _self.standard_ssf_masking = $('#ssf_masking').is(':checked');
             var graph_div = 'scaled_data';
 
             if (_self.anomaly !== 'none') {
@@ -277,13 +272,8 @@ ValidationViewer.prototype.buildViewer = function() {
             _self.clim_graph = null;
             _self.avg_graph = null;
             _self.graph = null;
-            _self.masking_graph.destroy();
             _self.masking_graph = null;
             _self.loadData(_self.standard_scaling,
-                           _self.standard_snow_depth,
-                           _self.standard_st_l1,
-                           _self.standard_air_temp,
-                           _self.standard_ssf_masking,
                            _self.anomaly, false);
 
         });
@@ -294,10 +284,6 @@ ValidationViewer.prototype.buildViewer = function() {
             if (_self.clim_graph === null) {
                 loadingGif('scaled_data_climatology');
                 _self.loadData(_self.standard_scaling,
-                    _self.standard_snow_depth,
-                    _self.standard_st_l1,
-                    _self.standard_air_temp,
-                    _self.standard_ssf_masking,
                     _self.anomaly,
                     true);
             } else {
@@ -314,10 +300,6 @@ ValidationViewer.prototype.buildViewer = function() {
             if (_self.graph === null) {
                 loadingGif('scaled_data');
                 _self.loadData(_self.standard_scaling,
-                    _self.standard_snow_depth,
-                    _self.standard_st_l1,
-                    _self.standard_air_temp,
-                    _self.standard_ssf_masking,
                     _self.anomaly,
                     true);
             } else {
@@ -331,10 +313,6 @@ ValidationViewer.prototype.buildViewer = function() {
             if (_self.avg_graph === null) {
                 loadingGif('scaled_data_average');
                 _self.loadData(_self.standard_scaling,
-                    _self.standard_snow_depth,
-                    _self.standard_st_l1,
-                    _self.standard_air_temp,
-                    _self.standard_ssf_masking,
                     _self.anomaly,
                     true);
             } else {
@@ -342,10 +320,6 @@ ValidationViewer.prototype.buildViewer = function() {
             }
         });
         _self.loadData(_self.standard_scaling,
-            _self.standard_snow_depth,
-            _self.standard_st_l1,
-            _self.standard_air_temp,
-            _self.standard_ssf_masking,
             _self.anomaly,
             false);
 
@@ -354,7 +328,7 @@ ValidationViewer.prototype.buildViewer = function() {
 
 
 
-ValidationViewer.prototype.loadData = function(scaling, snow_depth, st_l1, air_temp, ssf_masking, anomaly, add_only) {
+ValidationViewer.prototype.loadData = function(scaling, anomaly, add_only) {
 
     var _self = this;
     var data_div = 'scaled_data';
@@ -441,7 +415,6 @@ ValidationViewer.prototype.loadData = function(scaling, snow_depth, st_l1, air_t
             connectSeparatedPoints: true,
             legend: 'always',
             drawPoints: true,
-            valueRange: [-5, 40],
             ylabel: 'Temperature [&deg;C]',
             colors: ['#04396C', '#A63100', '#FF9D73'],
             zoomCallback: function(minDate, maxDate, yRanges) {
@@ -599,9 +572,7 @@ ValidationViewer.prototype.loadData = function(scaling, snow_depth, st_l1, air_t
             _self.setHSAFTarget(data.statistics.pearson.v);
         }
 
-        var settings_string = '<h1>Settings</h1> Filtered measurements for: <br> Snow depth >= ' + data.settings.snow_depth + 'm<br>\
-							  Soil temperature layer1 < ' + data.settings.surface_temp + '&deg;C <br> 2m air temperature < ' + data.settings.air_temp + '&deg;C <br>\
-							  Scaling method: ' + data.settings.scaling + '<br>';
+        var settings_string = '<h1>Settings</h1> Filtered measurements for: <br> ';
 
         if (!add_only) {
             $('#Results').prepend('<div id="result' + _self.counter + '" class="result_frame ui-corner-all"><div class="results_text">' + settings_string + '</div><br><div class="graph_frame"><div id="scatter_stat_div' + _self.counter + '">\
