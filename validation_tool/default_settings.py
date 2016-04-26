@@ -3,6 +3,7 @@ from validation_tool.server.datasets import XarrayDs
 
 # PATH to the downloaded ISMN data
 ISMN_PATH = os.path.join(os.path.dirname(__file__), '..', 'tests', 'test_ismn')
+ISMN_PATH = "/media/sf_D/CCI/Phase2/validation_tool/ISMN_data/"
 
 
 # lookup between dataset types and the classes that are used for
@@ -24,7 +25,7 @@ dictionary. Each dictionary must have the following keys:
 
 """
 VALIDATION_DS = {'cci': {'type': 'xray',
-                         'fid': "http://www.geo.tuwien.ac.at:8080/thredds/dodsC/testAll/ESACCI-SOILMOISTURE-L3S-SSMV-COMBINED-197811-201512_time-13575_lat-10_lon-10.nc",
+                         'fid': "http://www.geo.tuwien.ac.at/thredds/dodsC/testAll/ESACCI-SOILMOISTURE-L3S-SSMV-COMBINED-197811-201512_time-13575_lat-10_lon-10.nc",
                          'variable': 'sm',
                          'long_name': 'CCI soil moisture'}}
 
@@ -37,7 +38,7 @@ DEFAULT_VAL_DS = 'cci'
 # Datasets to be available for masking, same structure as the validation
 # datasets
 MASKING_DS = {'eraland_st_l1': {'type': 'xray',
-                                'fid': "http://www.geo.tuwien.ac.at:8080/thredds/dodsC/testAll/ERALAND_gbg4-139-stacked-1979-2014-time_10000,lon_5,lat_5.nc",
+                                'fid': "http://www.geo.tuwien.ac.at/thredds/dodsC/testAll/ERALAND_gbg4-139-stacked-1979-2014-time_10000,lon_5,lat_5.nc",
                                 'variable': 'var139',
                                 'long_name': 'ERALAND 0-7cm soil temperature'}}
 
