@@ -327,8 +327,6 @@ ValidationViewer.prototype.loadData = function(scaling, anomaly, add_only) {
     var _self = this;
     var data_div = 'scaled_data';
     var label_div = 'scaled_data_labels';
-    var value_range = [0, 0.7];
-    var value_range_abs = [0, 100];
     var ticker_function_abs = function(min, max, pixels, opts, dygraph, vals) {
         return [{
             v: 2,
@@ -352,7 +350,6 @@ ValidationViewer.prototype.loadData = function(scaling, anomaly, add_only) {
     };
 
     var axis_settings = {
-        valueRange: value_range_abs,
         ticker: ticker_function_abs
     };
 
@@ -361,11 +358,6 @@ ValidationViewer.prototype.loadData = function(scaling, anomaly, add_only) {
 
         data_div = data_div + '_' + anomaly;
         label_div = label_div + '_' + anomaly;
-        value_range = []; //[-0.3,0.3];
-        value_range_abs = [-50, 50];
-        axis_settings = {
-            valueRange: value_range_abs
-        };
     }
     var checked_masking_ds = [];
     var masking_operator = [];
@@ -425,9 +417,6 @@ ValidationViewer.prototype.loadData = function(scaling, anomaly, add_only) {
             }
 
         });
-        _self.masking_graph.updateOptions({
-        });
-
 
         if (data.settings.scaling === 'No scaling') {
 
@@ -442,7 +431,6 @@ ValidationViewer.prototype.loadData = function(scaling, anomaly, add_only) {
                 },
                 axes: {
                     y: {
-                        valueRange: value_range
                     },
                     y2: axis_settings
                 },
@@ -498,7 +486,6 @@ ValidationViewer.prototype.loadData = function(scaling, anomaly, add_only) {
                 legend: 'always',
                 axes: {
                     y: {
-                        valueRange: value_range
                     }
                 },
                 drawPoints: true,
