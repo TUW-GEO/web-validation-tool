@@ -26,7 +26,7 @@ def to_dygraph_format(self):
     data_index = self.index.values.astype('M8[s]').tolist()
     data_index = [x.strftime("%Y/%m/%d %H:%M:%S") for x in data_index]
     data_index = np.reshape(data_index, (len(data_index), 1))
-    data_values.insert(0, data_index)
+    data_values.insert(0, data_index.astype(object))
     data_values = np.column_stack(data_values)
     return labels, data_values.tolist()
 
