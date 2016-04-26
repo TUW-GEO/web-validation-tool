@@ -29,10 +29,19 @@ Run locally
 
 Run ``python validation_tool/app.py``, then visit http://localhost:5000
 
-This runs a flask development Server. If you want to use this in production for
-some reason then please consult the flask manual to setup a proper server.
+This runs a flask development Server.
 
 This will host the ISMN test data included in ``tests/test_ismn``.
+
+
+Deployment
+----------
+
+With gunicorn the tool can be deployed under the prefix
+``/my_app`` using the following command:
+
+``gunicorn --bind 0.0.0.0:5000 validation_tool:app -e SCRIPT_NAME=/my_app``
+
 
 Configure to host your own ISMN dataset
 =======================================
