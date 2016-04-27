@@ -62,6 +62,7 @@ def getoptions():
     validation_metadata = get_validation_metadata()
 
     data = jsonify({'scaling': app.config['SCALING_OPTIONS'],
+                    'default_scaling': app.config['DEFAULT_SCALING'],
                     'validation_datasets': validation_metadata})
 
     resp = make_response(data)

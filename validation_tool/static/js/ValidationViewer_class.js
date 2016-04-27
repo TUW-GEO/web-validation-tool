@@ -26,7 +26,6 @@ function ValidationViewer(div) {
 
     this.counter = 0;
 
-    this.standard_scaling = 'cdf_match';
     this.standard_snow_depth = 0;
     this.standard_st_l1 = 0;
     this.standard_air_temp = 0;
@@ -120,7 +119,6 @@ ValidationViewer.prototype.openViewer = function(station) {
 
     $("#close_button").bind('click', function(event) {
 
-        _self.standard_scaling = 'cdf_match';
         _self.standard_snow_depth = 0;
         _self.standard_st_l1 = 0;
         _self.standard_air_temp = 0;
@@ -254,6 +252,8 @@ ValidationViewer.prototype.buildViewer = function() {
         $('#tabs').tabs();
         $('#tabs').tabs('enable', '#absolute');
         $('#masking-tabs').tabs();
+        $('input:radio[name=scaling_selector][value='+ options.default_scaling +']').prop('checked', true);
+        _self.standard_scaling = options.default_scaling;
 
         loadingGif('masking_data');
         loadingGif('scaled_data');
