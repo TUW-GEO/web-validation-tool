@@ -134,6 +134,7 @@ def getdata():
     period = [start, end]
 
     masking_data = {'labels': [], 'data': []}
+    masking_meta = get_masking_metadata()
     masking_masked_dict = None
     if len(masking_ids) > 0:
         # prepare masking datasets
@@ -165,6 +166,11 @@ def getdata():
         else:
             masking_data = masking_data[masking_ids[0]]
             labels, values = masking_data.to_dygraph_format()
+
+        for i, label in enumerate(labels):
+            for mid in masking_meta:
+                if masking_meta[mid]['variable']['name'] in label:
+                    labels[i] = masking_meta[mid]['long_name']
 
         masking_data = {'labels': labels, 'data': values}
 
@@ -241,11 +247,17 @@ def getdata():
 
     if scaling is None:
         scaling = 'noscale'
+
+    masking_option_return = {}
+    for mid, mops, mval in zip(masking_ids,
+                               masking_ops,
+                               masking_values):
+        masking_option_return[mid] = {'op': mops,
+                                      'val': mval,
+                                      'name': masking_meta[mid]['long_name']}
+
     settings = {'scaling': scaling_options[scaling],
-                # 'snow_depth': mask['snow_depth'],
-                # 'surface_temp': mask['st_l1'],
-                # 'air_temp': mask['air_temp']
-                }
+                'masking': masking_option_return}
 
     output_data = {'validation_data': validation_datasets, 'masking_data': masking_data,
                    'statistics': statistics, 'settings': settings}
