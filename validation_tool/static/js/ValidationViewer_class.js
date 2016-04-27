@@ -561,6 +561,9 @@ ValidationViewer.prototype.loadData = function(scaling, anomaly, add_only) {
         }
 
         var settings_string = '<h1>Settings</h1> Filtered measurements for: <br> ';
+        $.each(data.settings.masking, function(i, v) {
+            settings_string += v.name + " " + v.op + " " + v.val + "<br>";
+        });
 
         if (!add_only) {
             $('#Results').prepend('<div id="result' + _self.counter + '" class="result_frame ui-corner-all"><div class="results_text">' + settings_string + '</div><br><div class="graph_frame"><div id="scatter_stat_div' + _self.counter + '">\
