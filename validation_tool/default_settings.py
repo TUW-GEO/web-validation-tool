@@ -1,4 +1,5 @@
 import os
+from collections import OrderedDict
 from validation_tool.server.datasets import XarrayDs
 
 # PATH to the downloaded ISMN data
@@ -52,12 +53,11 @@ MASKING_DS = {'eraland_st_l1': {'type': 'xray',
 
 # Other default settings
 
-SCALING_OPTIONS = {'noscale': 'No scaling',
-                   'linreg': 'Linear Regression',
-                   'mean_std': 'Mean - standard deviation',
-                   'min_max': 'Minimum,maximum',
-                   'lin_cdf_match': 'Piecewise linear CDF matching'
-                   }
-DEFAULT_SCALING = "lin_cdf_match"
+SCALING_OPTIONS = OrderedDict([('noscale', 'No scaling'),
+                               ('linreg', 'Linear Regression'),
+                               ('mean_std', 'Mean - standard deviation'),
+                               ('min_max', 'Minimum,maximum'),
+                               ('lin_cdf_match', 'Piecewise linear CDF matching')])
+DEFAULT_SCALING = "noscale"
 
 
