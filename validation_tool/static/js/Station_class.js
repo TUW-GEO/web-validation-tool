@@ -106,7 +106,7 @@ Station.prototype.generateInfoWindow = function() {
         html += '<br><a href="#", id="viewData" class="Button">View Data</a>';
 
 
-        if (this.validationButton && this.hasRecordsInDateRange(new Date(2007, 01, 01).getTime(), new Date(2012, 11, 31).getTime())) {
+        if (this.validationButton) {
             html += '<a href="#" id="compareData" class="Button">Compare to CCI</a>';
         }
 
