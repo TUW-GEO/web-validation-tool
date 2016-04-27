@@ -245,7 +245,7 @@ a:hover {
 
 .result_frame {
     display: none;
-    padding-left: 15px;
+    padding: 10px;
     border: 1px solid #dddddd;
 }
 
@@ -571,8 +571,9 @@ h4:hover {
     display: inline-block;
     color: #ffffff;
     font-weight: normal;
-    padding: 5px 20px;
+    padding: 9px 20px;
     text-decoration: none;
+    margin:1px;
 }
 
 .help_button {
@@ -722,6 +723,13 @@ h4:hover {
     opacity: .8;
     z-index: 100;
     top: 80px;
+}
+
+#load_button {
+    padding: 20px;
+    margin: 5px;
+    background: #e9e9e9;
+    border: 1px solid #dddddd;
 }
 
 .hidden {
