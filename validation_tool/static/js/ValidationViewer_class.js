@@ -602,7 +602,7 @@ ValidationViewer.prototype.loadData = function(scaling, anomaly, add_only) {
 
         $("[name='mse_help']").bind('click', function(event) {
             event.preventDefault();
-            $("#help_div_content").html('<iframe class="help_iframe" src="help/Mean Square Error MSE_valtool.htm"></iframe>');
+            $("#help_div_content").html('<iframe class="help_iframe" src="static/help/Mean Square Error MSE_valtool.htm"></iframe>');
             $("#help_div").fadeIn();
         });
 
