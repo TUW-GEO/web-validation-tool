@@ -155,18 +155,27 @@ def getdata():
         masking_dm = DataManager(masking_ds_dict, masking_ids[0],
                                  period=period)
         masking_data = {}
+        valid_masking_ids = []
         for mds in masking_ids:
-            masking_data[mds] = masking_dm.read_ds(mds, lon, lat)
-        if len(masking_ids) > 1:
+            mdata = masking_dm.read_ds(mds, lon, lat)
+            if mdata is not None:
+                masking_data[mds] = mdata
+                valid_masking_ids.append(mds)
+            else:
+                masking_data[mds] = pd.DataFrame()
+        if len(valid_masking_ids) > 1:
             masking_data = BasicTemporalMatching(window=1.0).combinatory_matcher(
                 masking_data, masking_ids[0], n=len(masking_ids))
 
             if len(masking_data) > 0:
                 labels, values = masking_data[
                     masking_data.keys()[0]].to_dygraph_format()
-        else:
-            masking_data = masking_data[masking_ids[0]]
+        elif len(valid_masking_ids) == 1:
+            masking_data = masking_data[valid_masking_ids[0]]
             labels, values = masking_data.to_dygraph_format()
+        else:
+            labels = [None]
+            values = None
 
         for i, label in enumerate(labels):
             for mid in masking_meta:
