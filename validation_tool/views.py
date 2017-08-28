@@ -328,7 +328,7 @@ def get_possible_timestamps():
     end = request.args.get('end')
 
     dr = pd.date_range(start, end, freq='H').to_pydatetime()
-    l = map(lambda x: x.isoformat(), dr)
+    l = map(lambda x: x.strftime('%Y-%m-%dT%H:00:00.000Z'), dr)
 
     resp = make_response(jsonify(dates=l))
     resp.headers['Access-Control-Allow-Origin'] = '*'
