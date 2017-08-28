@@ -52,8 +52,8 @@ which the ``ISMN_PATH`` variable points.
 During the first run after this change the program will parse your ISMN folder
 and store some metadata in the file ``ismn_metadata.json`` in the ISMN folder.
 This can take a few minutes for bigger datasets but is only a one time thing. If
-you add new data to the ISMN folder then delete this json file to trigger a
-rebuild of the metadata cache.
+you add new data to the ISMN folder then delete this json file and the
+``python_metadata`` folder to trigger a rebuild of the metadata cache.
 
 
 Note
